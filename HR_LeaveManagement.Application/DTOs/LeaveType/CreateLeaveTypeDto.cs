@@ -1,11 +1,10 @@
-﻿using HR_LeaveManagement.Application.DTOs.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HR_LeaveManagement.Application.DTOs
+namespace HR_LeaveManagement.Application.DTOs.LeaveType
 {
-    public class LeaveTypeDto : BaseDto
+    public class CreateLeaveTypeDto
     {
         public string Name { get; set; }
         public int DefaultDays { get; set; }

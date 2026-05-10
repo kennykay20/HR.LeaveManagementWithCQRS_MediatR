@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Queries
+namespace HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Commands
 {
-    public class GetLeaveTypeDetailRequest : IRequest<LeaveTypeDto>
+    public class DeleteLeaveTypeCommand : IRequest
     {
         public int Id { get; set; }
     }

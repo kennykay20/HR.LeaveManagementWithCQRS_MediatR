@@ -11,5 +11,6 @@ namespace HR_LeaveManagement.Application.Persistence.Contracts
         // add methods that is specific to this repository only here
         Task<LeaveRequest> GetLeaveRequestWithDetails(int id);
         Task<List<LeaveRequest>> GetLeaveRequestWithDetails();
+        Task ChangeApprovalStatus(LeaveRequest leaveRequest, bool? approvalStatus);
     }
 }
