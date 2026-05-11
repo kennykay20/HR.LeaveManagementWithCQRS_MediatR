@@ -19,8 +19,12 @@ namespace HR_LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
         }
         public async Task<Unit> Handle(DeleteLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
-            var leaveAllocation = await _leaveAllocationRepo.Get(request.Id);
-            await _leaveAllocationRepo.Delete(leaveAllocation);
+            var leaveAllocate = await _leaveAllocationRepo.Get(request.Id);
+            if (leaveAllocate == null)
+            {
+                throw new Exception("LeaveAllocate doesn't exist");
+            }
+            await _leaveAllocationRepo.Delete(leaveAllocate);
             return Unit.Value;
         }
     }

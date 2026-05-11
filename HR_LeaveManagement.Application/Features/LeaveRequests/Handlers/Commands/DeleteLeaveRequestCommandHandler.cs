@@ -20,6 +20,10 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
         public async Task<Unit> Handle(DeleteLeaveRequestCommand request, CancellationToken cancellationToken)
         {
             var leaveRequest = await _leaveRequestRepo.GetLeaveRequestWithDetails(request.Id);
+            if (leaveRequest == null)
+            {
+                throw new Exception("LeaveRequest doesn't exist");
+            }
             await _leaveRequestRepo.Delete(leaveRequest);
             return Unit.Value;
         }

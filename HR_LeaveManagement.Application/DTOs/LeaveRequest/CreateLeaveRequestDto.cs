@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HR_LeaveManagement.Application.DTOs.LeaveRequest
 {
-    public class CreateLeaveRequestDto
+    public class CreateLeaveRequestDto : ILeaveRequestDto
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
