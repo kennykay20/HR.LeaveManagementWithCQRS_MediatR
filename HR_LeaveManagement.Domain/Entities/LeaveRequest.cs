@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HR_LeaveManagement.Domain
+namespace HR_LeaveManagement.Domain.Entities
 {
     public class LeaveRequest : BaseCommonEntity
     {

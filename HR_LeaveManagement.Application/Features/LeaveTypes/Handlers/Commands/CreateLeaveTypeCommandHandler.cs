@@ -4,7 +4,7 @@ using HR_LeaveManagement.Application.Exceptions;
 using HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR_LeaveManagement.Application.Persistence.Contracts;
 using HR_LeaveManagement.Application.Responses;
-using HR_LeaveManagement.Domain;
+using HR_LeaveManagement.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
