@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HR_LeaveManagement.Application.Persistence.Contracts
+namespace HR_LeaveManagement.Application.Contracts.Persistence
 {
     public interface ILeaveTypeRepository : IGenericRepository<LeaveType>
     {
