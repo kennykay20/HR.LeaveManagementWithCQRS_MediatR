@@ -34,7 +34,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
             var leaveAllocate = await _leaveAllocationRepo.Get(request.LeaveAllocationDto.Id);
             if (leaveAllocate == null)
             {
-                throw new Exception("LeaveAllocate doesn't exist");
+                throw new NotFoundException(nameof(LeaveAllocation), request.LeaveAllocationDto.Id);
             }
             _mapper.Map(request.LeaveAllocationDto, leaveAllocate);
             await _leaveAllocationRepo.Update(leaveAllocate);

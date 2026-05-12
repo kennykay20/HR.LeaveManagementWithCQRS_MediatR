@@ -3,6 +3,7 @@ using HR_LeaveManagement.Application.DTOs.LeaveType.Validators;
 using HR_LeaveManagement.Application.Exceptions;
 using HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR_LeaveManagement.Application.Persistence.Contracts;
+using HR_LeaveManagement.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
             var leaveType = await _leaveTypeRepo.Get(request.LeaveTypeDto.Id);
             if (leaveType == null)
             {
-                throw new Exception("LeaveType doesn't exist");
+                throw new NotFoundException(nameof(LeaveType), request.LeaveTypeDto.Id);
             }
             _mapper.Map(request.LeaveTypeDto, leaveType);
             await _leaveTypeRepo.Update(leaveType);

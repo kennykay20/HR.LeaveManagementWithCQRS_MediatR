@@ -1,5 +1,7 @@
-﻿using HR_LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
+﻿using HR_LeaveManagement.Application.Exceptions;
+using HR_LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HR_LeaveManagement.Application.Persistence.Contracts;
+using HR_LeaveManagement.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -22,7 +24,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             var leaveRequest = await _leaveRequestRepo.GetLeaveRequestWithDetails(request.Id);
             if (leaveRequest == null)
             {
-                throw new Exception("LeaveRequest doesn't exist");
+                throw new NotFoundException(nameof(LeaveRequest), request.Id);
             }
             await _leaveRequestRepo.Delete(leaveRequest);
             return Unit.Value;

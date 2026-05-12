@@ -34,7 +34,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             var leaveRequest = await _leaveRequestRepo.Get(request.Id);
             if (leaveRequest == null)
             {
-                throw new Exception("LeaveRequest doesn't exist");
+                throw new NotFoundException(nameof(LeaveRequest), request.Id);
             }
             if (request.LeaveRequestDto != null)
             {
