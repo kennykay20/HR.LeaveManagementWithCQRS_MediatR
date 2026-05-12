@@ -11,6 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HR_LeaveManagement.Application.Models;
+using HR_LeaveManagement.Application.Contracts.Infrastructure.Templates;
+using HR_LeaveManagement.Application.Contracts.Infrastructure.Interfaces;
+using Hangfire;
 
 namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
@@ -18,11 +22,13 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
     {
         private readonly ILeaveRequestRepository _leaveRequestRepo;
         private readonly IMapper _mapper;
+        private readonly IEmailJobService _emailJobService;
 
-        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepo, IMapper mapper)
+        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepo, IMapper mapper, IEmailJobService emailJobService)
         {
             _leaveRequestRepo = leaveRequestRepo;
             _mapper = mapper;
+            _emailJobService = emailJobService;
         }
         public async Task<BaseCommandResponse> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
@@ -35,6 +41,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                 response.Success = false;
                 response.Message = "Creation Failed.";
                 response.Errors = validationResult.Errors.Select(er => er.ErrorMessage).ToList();
+                return response;
             }
 
             var leaveRequest = _mapper.Map<LeaveRequest>(request.LeaveRequestDto);
@@ -43,6 +50,24 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             response.Success = true;
             response.Message = "Creation successful.";
             response.Id = leaveRequest.Id;
+
+            var email = new Email
+            {
+                To = request.LeaveRequestDto.Email ?? "kennyoluwadamilare20@gmail.com",
+                Subject = "Leave Request Submitted",
+                Body = EmailTemplateGetter.EmailTemplate(request.LeaveRequestDto.StartDate, request.LeaveRequestDto.EndDate)
+            };
+
+            try
+            {
+                Console.WriteLine($"Hangfire started sending email notification to {email.To}");
+                _emailJobService.QueueLeaveRequestEmail(email);
+            }
+            catch(Exception ex)
+            {
+                // Log or handler error
+                Console.WriteLine("Error sending email notification " + ex.Message);
+            }
             return response;
         }
     }

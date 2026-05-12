@@ -21,6 +21,12 @@ namespace HR_LeaveManagement.Application.DTOs.LeaveRequest.Validators
             RuleFor(data => data.EndDate)
                 .GreaterThan(data => data.StartDate)
                 .WithMessage("{PropertyName} must be after {ComparisonValue}.");
+            
+            RuleFor(data => data.Email)
+                .NotEmpty()
+                .WithMessage("{PropertyName} is required.")
+                .EmailAddress()
+                .WithMessage("Invalid email format.");
 
             RuleFor(data => data.LeaveTypeId)
                 .GreaterThan(0)

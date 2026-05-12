@@ -9,6 +9,7 @@ namespace HR_LeaveManagement.Domain.Entities
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public String Email { get; set; }
         public LeaveType LeaveType { get; set; }
         public int LeaveTypeId { get; set; }
         public DateTime DateRequested { get; set; }

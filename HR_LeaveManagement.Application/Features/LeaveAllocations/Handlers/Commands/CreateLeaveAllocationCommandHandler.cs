@@ -35,6 +35,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
                 response.Success = false;
                 response.Message = "Creation failed.";
                 response.Errors = validationResult.Errors.Select(er => er.ErrorMessage).ToList();
+                return response;
             }
 
             var leaveAllocation = _mapper.Map<LeaveAllocation>(request.LeaveAllocationDto);
