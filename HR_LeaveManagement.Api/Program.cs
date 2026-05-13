@@ -17,7 +17,7 @@ try
         .MinimumLevel.Override("Microsoft.Hosting.Lifetime", Serilog.Events.LogEventLevel.Information)
         .Enrich.FromLogContext()
         .WriteTo.Console()
-        .ReadFrom.Configuration(builder.Configuration)
+        //.ReadFrom.Configuration(builder.Configuration)
         .CreateLogger();
 
     builder.Host.UseSerilog();
@@ -72,6 +72,7 @@ try
 }
 catch(Exception ex)
 {
+    Console.WriteLine(ex);
     Log.Fatal(ex, "Application start-up failed.");
 }
 finally
