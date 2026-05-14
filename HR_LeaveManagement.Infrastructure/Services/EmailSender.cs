@@ -7,6 +7,7 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,17 +24,33 @@ namespace HR_LeaveManagement.Infrastructure.Services
 
         public async Task<bool> SendEmailData(Email email, CancellationToken token = default)
         {
-            var client = new SendGridClient(_emailSettings.ApiKey);
-            var to = new EmailAddress(email.To);
-            var from = new EmailAddress
+            using var smtp = new SmtpClient(_emailSettings.Host, _emailSettings.Port)
             {
-                Email = _emailSettings.FromAddress,
-                Name = _emailSettings.FromName
-            };
-            var message = MailHelper.CreateSingleEmail(from, to, email.Subject, email.Body, email.Body);
-            var response = await client.SendEmailAsync(message);
+                Credentials = new NetworkCredential(
+                    _emailSettings.UserName,
+                    _emailSettings.Password),
 
-            return response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Accepted;
+                EnableSsl = _emailSettings.UseSSL,
+
+                Timeout = 30000 // 30 seconds
+            };
+
+            using var message = new MailMessage
+            {
+                From = new MailAddress(
+                    _emailSettings.FromAddress,
+                    _emailSettings.FromName),
+
+                Subject = email.Subject,
+                Body = email.Body,
+                IsBodyHtml = true
+            };
+
+            message.To.Add(email.To);
+
+            await smtp.SendMailAsync(message, token);
+
+            return true;
         }
 
         [AutomaticRetry(Attempts = 3)]

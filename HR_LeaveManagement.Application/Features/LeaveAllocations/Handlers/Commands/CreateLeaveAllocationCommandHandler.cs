@@ -28,7 +28,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
         {
             var response = new BaseCommandResponse();
             var validator = new CreateLeaveAllocationDtoValidator(_leaveAllocationRepo);
-            var validationResult = validator.Validate(request.LeaveAllocationDto);
+            var validationResult = await validator.ValidateAsync(request.LeaveAllocationDto);
 
             if (!validationResult.IsValid)
             {

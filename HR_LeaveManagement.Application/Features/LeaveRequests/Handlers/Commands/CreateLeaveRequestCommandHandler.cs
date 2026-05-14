@@ -34,7 +34,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
         {
             var response = new BaseCommandResponse();
             var validator = new CreateLeaveRequestDtoValidator(_leaveRequestRepo);
-            var validationResult = validator.Validate(request.LeaveRequestDto);
+            var validationResult = await validator.ValidateAsync(request.LeaveRequestDto);
 
             if (!validationResult.IsValid)
             {
