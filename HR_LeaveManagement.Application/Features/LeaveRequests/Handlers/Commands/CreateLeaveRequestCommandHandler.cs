@@ -45,6 +45,8 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             }
 
             var leaveRequest = _mapper.Map<LeaveRequest>(request.LeaveRequestDto);
+            leaveRequest.Approved = false;
+            leaveRequest.DateRequested = DateTime.Now;
             leaveRequest = await _leaveRequestRepo.Add(leaveRequest);
 
             response.Success = true;

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 
 namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
@@ -25,16 +26,35 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
         }
         public async Task<Unit> Handle(UpdateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateLeaveRequestDtoValidator(_leaveRequestRepo);
-            var validationResult = validator.Validate(request.LeaveRequestDto);
+            var id = 0;
+            ValidationResult validationResult;
+
+            if (request.LeaveRequestDto is not null)
+            {
+                id = request.LeaveRequestDto.Id;
+                var validator = new UpdateLeaveRequestDtoValidator(_leaveRequestRepo);
+                validationResult = await validator.ValidateAsync(request.LeaveRequestDto, cancellationToken);
+            }
+            else if (request.ChangeLeaveRequestApprovalDto is not null)
+            {
+                id = request.ChangeLeaveRequestApprovalDto.Id;
+                var validator = new ChangeApproveLeaveRequestDtoValidator();
+                validationResult = await validator.ValidateAsync(request.ChangeLeaveRequestApprovalDto, cancellationToken);
+            }
+            else
+            {
+                throw new BadRequestException("Invalid request.");
+            }
+
 
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult);
 
-            var leaveRequest = await _leaveRequestRepo.Get(request.Id);
+            
+            var leaveRequest = await _leaveRequestRepo.Get(id);
             if (leaveRequest == null)
             {
-                throw new NotFoundException(nameof(LeaveRequest), request.Id);
+                throw new NotFoundException(nameof(LeaveRequest), id);
             }
             if (request.LeaveRequestDto != null)
             {

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HR_LeaveManagement.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class LeaveRequestsController : ControllerBase
     {
@@ -49,9 +49,9 @@ namespace HR_LeaveManagement.Api.Controllers
 
         // PUT api/LeaveRequests
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateLeaveRequestDto request)
+        public async Task<IActionResult> Update([FromBody] UpdateLeaveRequestDto request)
         {
-            var command = new UpdateLeaveRequestCommand { Id = id, LeaveRequestDto = request };
+            var command = new UpdateLeaveRequestCommand { LeaveRequestDto = request };
             await _mediator.Send(command);
             return NoContent();
         }

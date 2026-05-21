@@ -8,7 +8,7 @@ using Serilog;
 
 namespace HR_LeaveManagement.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class LeaveTypesController : ControllerBase
     {

@@ -1,7 +1,10 @@
+﻿using Asp.Versioning;
 using Hangfire;
 using HR_LeaveManagement.Application;
 using HR_LeaveManagement.Infrastructure;
+using HR_LeaveManagement.Infrastructure.Helpers;
 using HR_LeaveManagement.Persistence;
+using Microsoft.Identity.Client;
 using Serilog;
 
 try
@@ -11,21 +14,46 @@ try
 
     // Configure serilog
 
-    Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Information()
-        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
-        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", Serilog.Events.LogEventLevel.Information)
-        .Enrich.FromLogContext()
-        .WriteTo.Console()
-        //.ReadFrom.Configuration(builder.Configuration)
-        .CreateLogger();
+    var applicationName = "HR_LeaveApplication"; // Hardcode or derive safely
 
-    builder.Host.UseSerilog();
+    // 1️ Bootstrap Serilog first — before creating builder
+    Log.Logger = new LoggerConfiguration()
+        .Enrich.FromLogContext()
+        .Enrich.WithProperty("ApplicationName", applicationName)
+        .Enrich.WithMachineName()
+        .Enrich.WithThreadId()
+        .Enrich.With<NigeriaTimeEnricher>()
+        .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] (NGA: {NigeriaTime}) ({ApplicationName}) {Message:lj}{NewLine}{Exception}")
+        .CreateBootstrapLogger();
+
+    
 
     // Add services to the container.
     builder.Services.ConfigureApplicationServices()
                     .ConfigureInfrastructureServices(builder.Configuration)
                     .ConfigurePersistenceServices(builder.Configuration);
+
+    // versioning 
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+    });
+
+    // 
+    builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+    {
+        loggerConfiguration
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.WithProperty("ApplicationName", applicationName)
+            .Enrich.FromLogContext()
+            .Enrich.With<NigeriaTimeEnricher>()
+            .WriteTo.Console( // fallback if config load fails
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+            );
+    }); // Full Serilog integration
 
     // Add services to the container.
 
