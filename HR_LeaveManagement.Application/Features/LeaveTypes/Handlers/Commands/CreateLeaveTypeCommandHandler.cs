@@ -37,7 +37,14 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 response.Errors = validationResult.Errors.Select(er => er.ErrorMessage).ToList();
                 return response;
             }
-
+            //check name already exist
+            var existLeaveType = await _leaveTypeRepo.GetLeaveTypeByName(request.LeaveTypeDto.Name);
+            if(existLeaveType != null)
+            {
+                response.Success = false;
+                response.Message = "Name already exist";
+                return response;
+            }
             var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
             var result = await _leaveTypeRepo.Add(leaveType);
 

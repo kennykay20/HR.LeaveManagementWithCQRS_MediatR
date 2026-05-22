@@ -4,6 +4,7 @@ using HR_LeaveManagement.Application;
 using HR_LeaveManagement.Infrastructure;
 using HR_LeaveManagement.Infrastructure.Helpers;
 using HR_LeaveManagement.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Serilog;
 
@@ -90,11 +91,31 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseAuthorization();
+    app.UseRouting();
 
     app.UseCors("CorsPolicy");
 
+    //app.UseAuthentication();
+
+    app.UseAuthorization();
+    
     app.MapControllers();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+
+        try
+        {
+            var context = services.GetRequiredService<HRLeaveManagementDbContext>();
+
+            context.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 
     app.Run();
 }
