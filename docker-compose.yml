@@ -1,5 +1,5 @@
 ﻿services:
-  hr_leave_api:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
