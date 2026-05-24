@@ -11,10 +11,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HR_LeaveManagement.Application.DTOs.LeaveAllocation;
 
 namespace HR_LeaveManagement.Application.Features.LeaveAllocations.Handlers.Commands
 {
-    public class CreateLeaveAllocationCommandHandler : IRequestHandler<CreateLeaveAllocationCommand, BaseCommandResponse>
+    public class CreateLeaveAllocationCommandHandler : IRequestHandler<CreateLeaveAllocationCommand, BaseCommandResponse<LeaveAllocationDto>>
     {
         private readonly ILeaveAllocationRepository _leaveAllocationRepo;
         private readonly IMapper _mapper;
@@ -24,9 +25,9 @@ namespace HR_LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
             _leaveAllocationRepo = leaveAllocationRepo;
             _mapper = mapper;
         }
-        public async Task<BaseCommandResponse> Handle(CreateLeaveAllocationCommand request, CancellationToken cancellationToken)
+        public async Task<BaseCommandResponse<LeaveAllocationDto>> Handle(CreateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseCommandResponse();
+            var response = new BaseCommandResponse<LeaveAllocationDto>();
             var validator = new CreateLeaveAllocationDtoValidator(_leaveAllocationRepo);
             var validationResult = await validator.ValidateAsync(request.LeaveAllocationDto);
 

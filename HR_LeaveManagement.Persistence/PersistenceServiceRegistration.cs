@@ -1,4 +1,5 @@
 ﻿using HR_LeaveManagement.Application.Contracts.Persistence;
+using HR_LeaveManagement.Application.Contracts.Persistences;
 using HR_LeaveManagement.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,7 @@ namespace HR_LeaveManagement.Persistence
             services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
             services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
             services.AddScoped<ILeaveAllocationRepository, LeaveAllocationRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }

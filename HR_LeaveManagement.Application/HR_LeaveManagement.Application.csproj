@@ -23,4 +23,8 @@
     <ProjectReference Include="..\HR_LeaveManagement.Domain\HR_LeaveManagement.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\Role\Validators\" />
+  </ItemGroup>
+
 </Project>

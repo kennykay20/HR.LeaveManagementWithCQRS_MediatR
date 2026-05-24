@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using HR_LeaveManagement.Application.Contracts.Persistence;
+using HR_LeaveManagement.Application.DTOs.LeaveRequest;
+using HR_LeaveManagement.Application.DTOs.LeaveType;
 using HR_LeaveManagement.Application.DTOs.LeaveType.Validators;
 using HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
-using HR_LeaveManagement.Application.Contracts.Persistence;
 using HR_LeaveManagement.Application.Responses;
 using HR_LeaveManagement.Domain.Entities;
 using MediatR;
@@ -14,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 {
-    public class CreateLeaveTypeCommandHandler : IRequestHandler<CreateLeaveTypeCommand, BaseCommandResponse>
+    public class CreateLeaveTypeCommandHandler : IRequestHandler<CreateLeaveTypeCommand, BaseCommandResponse<LeaveTypeDto>>
     {
         private readonly ILeaveTypeRepository _leaveTypeRepo;
         private readonly IMapper _mapper;
@@ -24,9 +26,9 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
             _leaveTypeRepo = leaveTypeRepo;
             _mapper = mapper;
         }
-        public async Task<BaseCommandResponse> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
+        public async Task<BaseCommandResponse<LeaveTypeDto>> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseCommandResponse();
+            var response = new BaseCommandResponse<LeaveTypeDto>();
             var validator = new CreateLeaveTypeDtoValidator();
             var validationResult = await validator.ValidateAsync(request.LeaveTypeDto);
 
@@ -35,6 +37,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 response.Success = false;
                 response.Message = "Creation failed.";
                 response.Errors = validationResult.Errors.Select(er => er.ErrorMessage).ToList();
+                response.Data = null;
                 return response;
             }
             //check name already exist
@@ -43,14 +46,18 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
             {
                 response.Success = false;
                 response.Message = "Name already exist";
+                response.Data = null;
                 return response;
             }
             var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
             var result = await _leaveTypeRepo.Add(leaveType);
+            
 
             response.Success = true;
             response.Message = "Creation successful.";
             response.Id = result.Id;
+            response.Data.Id = result.Id;
+
             return response;
         }
     }

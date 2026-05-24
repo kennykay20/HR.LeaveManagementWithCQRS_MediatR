@@ -2,6 +2,7 @@
 using HR_LeaveManagement.Application.DTOs.LeaveAllocation;
 using HR_LeaveManagement.Application.DTOs.LeaveRequest;
 using HR_LeaveManagement.Application.DTOs.LeaveType;
+using HR_LeaveManagement.Application.DTOs.User;
 using HR_LeaveManagement.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,9 @@ namespace HR_LeaveManagement.Application.Profiles
             CreateMap<CreateLeaveTypeDto, LeaveType>().ReverseMap();
             CreateMap<CreateLeaveRequestDto, LeaveRequest>().ReverseMap();
             CreateMap<CreateLeaveAllocationDto, LeaveAllocation>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, UserListDto>().ReverseMap();
+            CreateMap<CreateUserDto, User>().ReverseMap();
         }
     }
 }

@@ -15,10 +15,11 @@ using HR_LeaveManagement.Application.Models;
 using HR_LeaveManagement.Application.Contracts.Infrastructure.Templates;
 using HR_LeaveManagement.Application.Contracts.Infrastructure.Interfaces;
 using Hangfire;
+using HR_LeaveManagement.Application.DTOs.LeaveRequest;
 
 namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
-    public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveRequestCommand, BaseCommandResponse>
+    public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveRequestCommand, BaseCommandResponse<LeaveRequestDto>>
     {
         private readonly ILeaveRequestRepository _leaveRequestRepo;
         private readonly IMapper _mapper;
@@ -30,9 +31,9 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             _mapper = mapper;
             _emailJobService = emailJobService;
         }
-        public async Task<BaseCommandResponse> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
+        public async Task<BaseCommandResponse<LeaveRequestDto>> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseCommandResponse();
+            var response = new BaseCommandResponse<LeaveRequestDto>();
             var validator = new CreateLeaveRequestDtoValidator(_leaveRequestRepo);
             var validationResult = await validator.ValidateAsync(request.LeaveRequestDto);
 
@@ -41,6 +42,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                 response.Success = false;
                 response.Message = "Creation Failed.";
                 response.Errors = validationResult.Errors.Select(er => er.ErrorMessage).ToList();
+                response.Data = null;
                 return response;
             }
 

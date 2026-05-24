@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Commands
 {
-    public class CreateLeaveTypeCommand : IRequest<BaseCommandResponse>
+    public class CreateLeaveTypeCommand : IRequest<BaseCommandResponse<LeaveTypeDto>>
     {
         public CreateLeaveTypeDto LeaveTypeDto { get; set; }
     }

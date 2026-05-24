@@ -1,0 +1,53 @@
+﻿using HR_LeaveManagement.Application.Contracts.Persistence;
+using HR_LeaveManagement.Application.Contracts.Persistences;
+using HR_LeaveManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HR_LeaveManagement.Persistence.Repositories
+{
+    public class UserRepository : GenericRepository<User>, IUserRepository
+    {
+        private readonly HRLeaveManagementDbContext _dbContext;
+
+        public UserRepository(HRLeaveManagementDbContext dbContext) 
+            : base(dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            var result = await _dbContext.Users.Where((user) => user.Email == email).FirstOrDefaultAsync();
+            return result;
+        }
+
+        public async Task<List<User>> GetUserPageListAsync(int pageNumber, int pageSize)
+        {
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                // throw invalid pagination parameter
+            }
+
+            var users = _dbContext.Users.AsQueryable();
+            //var total = await users.CountAsync();
+
+            foreach (var item in users)
+            {
+                item.Password = "";
+                item.RegistrationToken = "";
+            }
+
+            var items = await users
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return items;
+        }
+    }
+}

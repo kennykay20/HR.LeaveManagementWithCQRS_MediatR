@@ -2,6 +2,7 @@
 using HR_LeaveManagement.Application.Contracts.Infrastructure.Interfaces;
 using HR_LeaveManagement.Application.Models;
 using HR_LeaveManagement.Infrastructure.Services;
+using HR_LeaveManagement.Infrastructure.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -18,6 +19,11 @@ namespace HR_LeaveManagement.Infrastructure
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IEmailJobService, EmailJobService>();
+
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+            services.AddScoped<IJwtService, JwtService>();
+
+            services.AddScoped<IPasswordHelper, PasswordHelper>();
 
             services.AddHangfire(config =>
                     config.UseSqlServerStorage(
