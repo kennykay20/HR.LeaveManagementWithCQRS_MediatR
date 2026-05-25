@@ -74,6 +74,7 @@ try
     var app = builder.Build();
 
     Log.Information("Running in {Environment}", app.Environment.EnvironmentName);
+    Log.Information("Base URL: ", Environment.GetEnvironmentVariable("BASE_URL"));
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

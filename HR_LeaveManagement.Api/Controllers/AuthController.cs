@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HR_LeaveManagement.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace HR_LeaveManagement.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterDto dto)
         {
             var command = new RegisterUserCommand {  registerDto = dto };
@@ -25,7 +25,7 @@ namespace HR_LeaveManagement.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var command = new LoginCommand { loginDto = dto };
