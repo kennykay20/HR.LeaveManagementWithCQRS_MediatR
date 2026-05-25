@@ -20,10 +20,10 @@ namespace HR_LeaveManagement.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<User> GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmail(string email)
         {
             var result = await _dbContext.Users.Where((user) => user.Email == email).FirstOrDefaultAsync();
-            return result;
+            return result ?? null;
         }
 
         public async Task<List<User>> GetUserPageListAsync(int pageNumber, int pageSize)

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HR_LeaveManagement.Application.DTOs.Auth;
 using HR_LeaveManagement.Application.DTOs.LeaveAllocation;
 using HR_LeaveManagement.Application.DTOs.LeaveRequest;
 using HR_LeaveManagement.Application.DTOs.LeaveType;
@@ -24,6 +25,7 @@ namespace HR_LeaveManagement.Application.Profiles
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, UserListDto>().ReverseMap();
             CreateMap<CreateUserDto, User>().ReverseMap();
+            CreateMap<RegisterDto, User>().ReverseMap();
         }
     }
 }

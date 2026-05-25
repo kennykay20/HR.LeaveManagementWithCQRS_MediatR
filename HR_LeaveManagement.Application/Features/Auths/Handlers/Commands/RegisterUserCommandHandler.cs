@@ -10,6 +10,7 @@ using HR_LeaveManagement.Application.Responses;
 using HR_LeaveManagement.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
         private readonly IOtpService _otpService;
         private readonly IEmailJobService _emailJobService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<RegisterUserCommandHandler> _logger;
 
         public RegisterUserCommandHandler(
             IUserRepository userRepository, 
@@ -35,7 +37,8 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             IPasswordHelper passwordHelper, 
             IOtpService otpService,
             IEmailJobService emailJobService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            ILogger<RegisterUserCommandHandler> logger
             )
         {
             _userRepository = userRepository;
@@ -44,6 +47,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             _otpService = otpService;
             _emailJobService = emailJobService;
             _configuration = configuration;
+            _logger = logger;
         }
         public async Task<BaseCommandResponse<UserDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
@@ -52,7 +56,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             var validationResult = await validator.ValidateAsync(request.registerDto);
             var email = request.registerDto.Email;
             var password = request.registerDto.Password;
-
+            _logger.LogInformation($"email is {email}, and password = {password} ");
             if (!validationResult.IsValid)
             {
                 response.Success = false;
@@ -61,8 +65,9 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 response.Data = null;
                 return response;
             }
-
+            _logger.LogInformation("Validator is valid ");
             var emailExist = await _userRepository.GetUserByEmail(email);
+            
             if (emailExist != null)
             {
                 response.Success = false;
@@ -72,11 +77,13 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
 
                 return response;
             }
+            _logger.LogInformation("emailExist is null");
 
             var salt = _passwordHelper.GenerateSalt();
             var passwordHash = _passwordHelper.GenerateHashPassword(password, salt);
 
             var user = _mapper.Map<User>(request.registerDto);
+            _logger.LogInformation("User mapper");
             user.IsActive = false;
             user.Password = passwordHash;
             user.IsNewUser = true;
@@ -89,9 +96,11 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             {
                 // generate an otp
                 var otp = _otpService.GenerateOtp();
+                _logger.LogInformation($"otp value = {otp}");
                 // Send otp to user's email;
                 var fullName = request.registerDto.FirstName + " " + request.registerDto.LastName;
                 var appURL = Environment.GetEnvironmentVariable("BASE_URL") ?? _configuration["BASE:URL"];
+                _logger.LogInformation("Base URL - ${baseUrl}, ${otp}", appURL, otp);
                 Console.WriteLine("Base URL = ", appURL);
                 var fullVerifyUrl = $"{appURL}/api/v1/auth/verify-email?otp={otp}";
                 var emailData = new Email
@@ -110,6 +119,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 {
                     // Log or handler error
                     Console.WriteLine("Error sending email notification " + ex.Message);
+                    throw new Exception(ex.Message);
                 }
 
                 result.Otp = otp;

@@ -10,7 +10,7 @@ namespace HR_LeaveManagement.Application.Contracts.Persistences
 {
     public interface IUserRepository : IGenericRepository<User>
     {
-        Task<User> GetUserByEmail(string email);
+        Task<User?> GetUserByEmail(string email);
         Task<List<User>> GetUserPageListAsync(int pageNumber, int pageSize);
     }
 }
