@@ -18,7 +18,7 @@ namespace HR_LeaveManagement.Application.DTOs.User
 
         [Required]
         public string Password { get; set; }
-        public string Roles { get; set; } = string.Empty;
+        //public string Roles { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public bool IsNewUser { get; set; }
         //public string Otp { get; set; } = string.Empty;

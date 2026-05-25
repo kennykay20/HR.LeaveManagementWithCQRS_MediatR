@@ -59,7 +59,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             {
                 To = request.LeaveRequestDto.Email ?? "kennyoluwadamilare20@gmail.com",
                 Subject = "Leave Request Submitted",
-                Body = EmailTemplateGetter.EmailTemplate(request.LeaveRequestDto.StartDate, request.LeaveRequestDto.EndDate)
+                Body = EmailTemplateGetter.LeaveRequestNotification(request.LeaveRequestDto.StartDate, request.LeaveRequestDto.EndDate)
             };
 
             try

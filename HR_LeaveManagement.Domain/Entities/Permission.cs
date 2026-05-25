@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace HR_LeaveManagement.Domain.Entities
 {
-    public class Role : BaseCommonEntity
+    public class Permission : BaseCommonEntity
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public string Name { get; set; } = default!;
+        public string Description { get; set; } = default!;
         public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 }

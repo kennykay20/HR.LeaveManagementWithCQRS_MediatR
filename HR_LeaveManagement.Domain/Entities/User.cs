@@ -18,7 +18,7 @@ namespace HR_LeaveManagement.Domain.Entities
 
         [Required]
         public string Password { get; set; }
-        public string Roles { get; set; } = string.Empty;
+        //public string Roles { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public bool IsNewUser { get; set; }
         public string Otp { get; set; } = string.Empty;
@@ -27,5 +27,6 @@ namespace HR_LeaveManagement.Domain.Entities
         public bool IsDeleted { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }
 }

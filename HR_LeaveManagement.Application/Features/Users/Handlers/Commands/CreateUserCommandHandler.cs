@@ -54,7 +54,7 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Commands
                 user.Password = passwordHash;
                 user.IsNewUser = true;
                 user.IsDeleted = false;
-                user.Roles = "Admin";
+                //user.Roles = "Admin";
 
                 var result = await _userRepository.Add(user);
 

@@ -24,6 +24,7 @@ namespace HR_LeaveManagement.Infrastructure
             services.AddScoped<IJwtService, JwtService>();
 
             services.AddScoped<IPasswordHelper, PasswordHelper>();
+            services.AddScoped<IOtpService, OtpService>();
 
             services.AddHangfire(config =>
                     config.UseSqlServerStorage(

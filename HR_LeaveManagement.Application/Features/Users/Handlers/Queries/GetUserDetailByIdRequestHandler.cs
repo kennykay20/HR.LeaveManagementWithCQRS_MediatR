@@ -15,9 +15,9 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Queries
     public class GetUserDetailByIdRequestHandler : IRequestHandler<GetUserDetailByIdRequest, UserDto>
     {
         private readonly IUserRepository _userRepository;
-        private readonly Mapper _mapper;
+        private readonly IMapper _mapper;
 
-        public GetUserDetailByIdRequestHandler(IUserRepository userRepository, Mapper mapper)
+        public GetUserDetailByIdRequestHandler(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;

@@ -18,9 +18,17 @@ namespace HR_LeaveManagement.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RegisterDto request)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterDto dto)
         {
-            var command = new RegisterUserCommand {  registerDto = request };
+            var command = new RegisterUserCommand {  registerDto = dto };
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            var command = new LoginCommand { loginDto = dto };
             var result = await _mediator.Send(command);
             return Ok(result);
         }

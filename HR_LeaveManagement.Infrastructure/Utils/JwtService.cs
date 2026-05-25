@@ -9,15 +9,19 @@ using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using HR_LeaveManagement.Application.Contracts.Infrastructure.Interfaces;
+using Microsoft.Extensions.Options;
+using HR_LeaveManagement.Application.Models;
 
 
 namespace HR_LeaveManagement.Infrastructure.Utils
 {
     public class JwtService : IJwtService
     {
-        public JwtService()
+        private readonly JwtSettings _jwtSettings;
+
+        public JwtService(IOptions<JwtSettings> jwtSettings)
         {
-            
+            _jwtSettings = jwtSettings.Value;
         }
         public string[] GetSecretKeys()
         {
@@ -26,20 +30,13 @@ namespace HR_LeaveManagement.Infrastructure.Utils
             return [ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET];
         }
 
-        public string GenerateAccessToken(User user, string keyValue, string issuerValue, string audienceValue)
+        public string GenerateAccessToken(User user, IList<Claim> claims)
         {
-            var key = Encoding.UTF8.GetBytes(keyValue);
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, Convert.ToString(user.Id)),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-                new Claim(ClaimTypes.Role, user.Roles),
-            };
+            var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
 
             var token = new JwtSecurityToken(
-                issuer: issuerValue,
-                audience: audienceValue,
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(15),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256)
@@ -53,7 +50,8 @@ namespace HR_LeaveManagement.Infrastructure.Utils
             var randomNumber = new byte[32];
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
+            string result = Convert.ToBase64String(randomNumber).ToString();
+            return result;
         }
     }
 }
