@@ -6,6 +6,7 @@ using HR_LeaveManagement.Application.Features.Auths.Requests.Commands;
 using HR_LeaveManagement.Application.Responses;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
         private readonly IOtpService _otpService;
         private readonly IConfiguration _configuration;
         private readonly IPasswordHelper _passwordHelper;
+        private readonly ILogger<LoginCommandHandler> _logger;
 
         public LoginCommandHandler(
             IUserRepository userRepository, 
@@ -33,7 +35,8 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             IClaimsService claimsService,
             IOtpService otpService,
             IConfiguration configuration,
-            IPasswordHelper passwordHelper
+            IPasswordHelper passwordHelper,
+            ILogger<LoginCommandHandler> logger
             )
         {
             _userRepository = userRepository;
@@ -43,6 +46,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             _otpService = otpService;
             _configuration = configuration;
             _passwordHelper = passwordHelper;
+            _logger = logger;
         }
 
         public IClaimsService ClaimsService { get; }
@@ -63,7 +67,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 response.RefreshToken = "";
                 return response;
             }
-
+            _logger.LogInformation("Validator is valid ");
             try
             {
                 var user = await _userRepository.GetUserByEmail(request.loginDto.Email);
@@ -76,6 +80,8 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                     response.RefreshToken = "";
                     return response;
                 }
+
+                _logger.LogInformation($"Is user active {user.IsActive}, email = {user.Email}");
 
                 if (!user.IsActive)
                 {
@@ -90,6 +96,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                     }
                     else
                     {
+                        _logger.LogInformation($"Email {user.Email} has been de-activated. ");
                         response.Success = false;
                         response.Message = "User has been de-activated.";
                         response.Errors = null;
@@ -104,9 +111,10 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 {
                     isMatch = _passwordHelper.VerifyHashPassword(request.loginDto.Password, hashPassword);
                 }
-
+                _logger.LogInformation($"Is login password match {isMatch}");
                 if (!isMatch)
                 {
+                    _logger.LogInformation("Invalid login password ");
                     response.Success = false;
                     response.Message = "Invalid login password.";
                     response.Errors = null;
@@ -145,6 +153,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             }
 
             var claims = await _claimsService.GetUserClaimsAsync(user);
+            _logger.LogInformation($"token claims - {claims} ");
             var token = _jwtService.GenerateAccessToken(user!, claims);
             return token;
         }
@@ -165,12 +174,17 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
 
             var refreshToken = _jwtService.GenerateRefreshToken();
 
+            _logger.LogInformation($"refreshToken generated {refreshToken} ");
             Console.WriteLine("refreshToken generated ", refreshToken);
 
             var hashedRefreshToken = SHA256.HashData(
                 Encoding.UTF8.GetBytes(refreshToken)
             );
+
+            _logger.LogInformation($"save hashed refreshtoken {hashedRefreshToken} ");
+            _logger.LogInformation($"save hashed refreshtoken tostring {hashedRefreshToken.ToString()} ");
             Console.WriteLine("save hashed refreshtoken ", hashedRefreshToken);
+
             user!.RefreshToken = hashedRefreshToken.ToString();
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             await _userRepository.Update(user);
@@ -182,7 +196,5 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             response.Errors = null!;
             return response;
         }
-
-
     }
 }

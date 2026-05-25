@@ -43,8 +43,9 @@ namespace HR_LeaveManagement.Persistence.Repositories
 
         public async Task Update(T entity)
         {
-            _dbContext.Set<T>().Attach(entity);
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            //_dbContext.Set<T>().Update(entity);
+            //_dbContext.Entry(entity).State = EntityState.Modified;
+            _dbContext.Entry(entity).CurrentValues.SetValues(entity);
             await _dbContext.SaveChangesAsync();
         }
         public async Task Delete(T entity)

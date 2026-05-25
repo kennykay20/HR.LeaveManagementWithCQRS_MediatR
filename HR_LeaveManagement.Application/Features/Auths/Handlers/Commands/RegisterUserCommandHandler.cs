@@ -91,7 +91,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             //user.Roles = "Admin";
 
             var result = await _userRepository.Add(user);
-
+            _logger.LogInformation($"user id = {result.Id}, email = {result.Email}, createdAt = {result.DateCreated}, and lastname = {result.LastName}");
             try
             {
                 // generate an otp
@@ -100,9 +100,10 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 // Send otp to user's email;
                 var fullName = request.registerDto.FirstName + " " + request.registerDto.LastName;
                 var appURL = Environment.GetEnvironmentVariable("BASE_URL") ?? _configuration["BASE:URL"];
-                _logger.LogInformation("Base URL - ${baseUrl}, ${otp}", appURL, otp);
+                _logger.LogInformation($"Base URL - {appURL}, and otp value - {otp}");
                 Console.WriteLine("Base URL = ", appURL);
                 var fullVerifyUrl = $"{appURL}/api/v1/auth/verify-email?otp={otp}";
+                _logger.LogInformation($"Full URL - {fullVerifyUrl}, and user fullname - {fullName} ");
                 var emailData = new Email
                 {
                     To = request.registerDto.Email ?? "kennyoluwadamilare20@gmail.com",
@@ -124,10 +125,11 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
 
                 result.Otp = otp;
                 result.OtpExpiry = DateTime.UtcNow.AddMinutes(10);
-
+                _logger.LogInformation($"user id = {result.Id}, email = {result.Email}, Otp = {result.Otp}, expiry time = {result.OtpExpiry}, and lastname = {result.LastName}");
                 // update the user table
                 await _userRepository.Update(result);
 
+                _logger.LogInformation($"updated at user id = {result.Id}, email = {result.Email}, updatedAt = {result.LastModifiedBy}, and lastname = {result.LastName}");
                 response.Success = true;
                 response.Message = "New user registered successfully, Please check your email to verify your account";
                 response.Id = result.Id;
