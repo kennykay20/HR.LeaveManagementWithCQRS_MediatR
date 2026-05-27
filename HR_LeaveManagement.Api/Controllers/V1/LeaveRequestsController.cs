@@ -1,4 +1,5 @@
-﻿using HR_LeaveManagement.Application.DTOs.LeaveAllocation;
+﻿using Asp.Versioning;
+using HR_LeaveManagement.Application.DTOs.LeaveAllocation;
 using HR_LeaveManagement.Application.DTOs.LeaveRequest;
 using HR_LeaveManagement.Application.Features.LeaveAllocations.Requests.Commands;
 using HR_LeaveManagement.Application.Features.LeaveAllocations.Requests.Queries;
@@ -9,9 +10,10 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HR_LeaveManagement.Api.Controllers
+namespace HR_LeaveManagement.Api.Controllers.V1
 {
-    [Route("api/v1/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class LeaveRequestsController : ControllerBase
     {

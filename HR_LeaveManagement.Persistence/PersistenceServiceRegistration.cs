@@ -26,6 +26,8 @@ namespace HR_LeaveManagement.Persistence
             services.AddScoped<ILeaveAllocationRepository, LeaveAllocationRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
             services.AddScoped<IClaimsService, ClaimsService>();
 

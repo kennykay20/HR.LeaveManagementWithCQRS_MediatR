@@ -3,6 +3,8 @@ using HR_LeaveManagement.Application.DTOs.Auth;
 using HR_LeaveManagement.Application.DTOs.LeaveAllocation;
 using HR_LeaveManagement.Application.DTOs.LeaveRequest;
 using HR_LeaveManagement.Application.DTOs.LeaveType;
+using HR_LeaveManagement.Application.DTOs.Permission;
+using HR_LeaveManagement.Application.DTOs.Role;
 using HR_LeaveManagement.Application.DTOs.User;
 using HR_LeaveManagement.Domain.Entities;
 using System;
@@ -26,6 +28,11 @@ namespace HR_LeaveManagement.Application.Profiles
             CreateMap<User, UserListDto>().ReverseMap();
             CreateMap<CreateUserDto, User>().ReverseMap();
             CreateMap<RegisterDto, User>().ReverseMap();
+            CreateMap<CreateRoleDto, Role>().ReverseMap();
+            CreateMap<Role, RoleDetailsDto>().ReverseMap();
+            CreateMap<Role, RoleDto>().ReverseMap();
+            CreateMap<Permission, PermissionDto>().ReverseMap();
+            CreateMap<CreatePermissionDto, Permission>().ReverseMap();
         }
     }
 }

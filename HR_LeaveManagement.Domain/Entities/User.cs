@@ -24,7 +24,6 @@ namespace HR_LeaveManagement.Domain.Entities
         public string Otp { get; set; } = string.Empty;
         public DateTime? OtpExpiry { get; set; }
         public string RegistrationToken { get; set; } = string.Empty;
-        public bool IsDeleted { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

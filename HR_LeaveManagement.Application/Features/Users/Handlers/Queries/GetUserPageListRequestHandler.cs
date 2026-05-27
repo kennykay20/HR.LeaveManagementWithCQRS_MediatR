@@ -26,14 +26,15 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Queries
         public async Task<ApiListPageResponse<List<UserListDto>>> Handle(GetUserPageListRequest request, CancellationToken cancellationToken)
         {
             var response = new ApiListPageResponse<List<UserListDto>>();
-            var pageNumber = request.userPageDto.PageNumber;
-            var pageSize = request.userPageDto.PageSize;
+            var pageNumber = request.PageNumber;
+            var pageSize = request.PageSize;
 
             if (pageNumber < 1 || pageSize < 1)
             {
                 response.Success = false;
                 response.Message = "Invalid pagination parameters.";
-                response.Data = null;
+                response.Data = null!;
+                response.Errors = null!;
                 return response;
             }
 
@@ -42,19 +43,19 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Queries
             if (results.Count < 1)
             {
                 response.Success = false;
-                response.Message = "";
+                response.Message = "No data";
                 response.Count = 0;
                 response.PageNumber = pageNumber;
                 response.PageSize = pageSize;
                 response.TotalPages = results.Count;
-                response.Data = null;
+                response.Data = null!;
             }
 
             var total = results.Count;
             return new ApiListPageResponse<List<UserListDto>>()
             {
                 Success = true,
-                Errors = null,
+                Errors = null!,
                 Message = $"Total number of results = {total}",
                 PageNumber = pageNumber,
                 PageSize = pageSize,

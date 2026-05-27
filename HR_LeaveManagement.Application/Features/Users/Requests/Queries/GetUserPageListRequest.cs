@@ -11,6 +11,7 @@ namespace HR_LeaveManagement.Application.Features.Users.Requests.Queries
 {
     public class GetUserPageListRequest : IRequest<ApiListPageResponse<List<UserListDto>>>
     {
-        public UserPageDto userPageDto { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
     }
 }

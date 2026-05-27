@@ -1,13 +1,20 @@
-﻿using HR_LeaveManagement.Application.DTOs.Auth;
+﻿using Asp.Versioning;
+using HR_LeaveManagement.Application.Contracts.Attributes.Permissions;
+using HR_LeaveManagement.Application.DTOs.Auth;
 using HR_LeaveManagement.Application.Features.Auths.Requests.Commands;
+using HR_LeaveManagement.Application.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
-namespace HR_LeaveManagement.Api.Controllers
+namespace HR_LeaveManagement.Api.Controllers.V1
 {
-    [Route("api/v1/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -17,6 +24,9 @@ namespace HR_LeaveManagement.Api.Controllers
             _mediator = mediator;
         }
 
+        // POST: // api/v1/Auth/register
+        //[Authorize]
+        //[HasPermission(Permissions.Role.Create)]
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterDto dto)
         {
@@ -30,7 +40,13 @@ namespace HR_LeaveManagement.Api.Controllers
         {
             var command = new LoginCommand { loginDto = dto };
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return Created("", result);
+        }
+
+        [HttpPut("otp/verify")]
+        public async Task<IActionResult> VerifyOtp()
+        {
+            return Ok();
         }
     }
 }

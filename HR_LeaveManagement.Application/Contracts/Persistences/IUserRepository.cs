@@ -12,5 +12,6 @@ namespace HR_LeaveManagement.Application.Contracts.Persistences
     {
         Task<User?> GetUserByEmail(string email);
         Task<List<User>> GetUserPageListAsync(int pageNumber, int pageSize);
+        Task<User?> GetUserRolesByUserId(int userId);
     }
 }

@@ -29,7 +29,7 @@ namespace HR_LeaveManagement.Persistence.EF_Configurations
 
             builder.HasOne(x => x.Role)
                 .WithMany(x => x.UserRoles)
-                .HasForeignKey(x => x.UserId)
+                .HasForeignKey(x => x.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

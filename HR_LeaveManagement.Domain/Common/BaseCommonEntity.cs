@@ -9,6 +9,7 @@ namespace HR_LeaveManagement.Domain.Common
     {
         [Key]
         public int Id { get; set; }
+        public bool IsDeleted { get; set; }
         public DateTime DateCreated { get; set; }
         public string CreatedBy { get; set; } = "Admin";
         public DateTime LastModifiedDate { get; set; }

@@ -37,10 +37,12 @@ namespace HR_LeaveManagement.Persistence
             foreach (var entry in ChangeTracker.Entries<BaseCommonEntity>())
             {
                 entry.Entity.LastModifiedDate = DateTime.Now;
-                
+                Console.WriteLine("Entity state = ", entry.State);
                 if(entry.State == EntityState.Added)
                 {
+                    Console.WriteLine("Inside entry state for add");
                     entry.Entity.DateCreated = DateTime.Now;
+                    entry.Entity.IsDeleted = false;
                 }
             }
             return base.SaveChangesAsync(cancellationToken);

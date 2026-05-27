@@ -1,9 +1,13 @@
 ﻿using Asp.Versioning;
+using Asp.Versioning.Conventions;
 using Hangfire;
 using HR_LeaveManagement.Application;
+using HR_LeaveManagement.Application.Contracts.Attributes.Permissions;
+using HR_LeaveManagement.Application.Models;
 using HR_LeaveManagement.Infrastructure;
 using HR_LeaveManagement.Infrastructure.Helpers;
 using HR_LeaveManagement.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Serilog;
@@ -34,14 +38,6 @@ try
                     .ConfigureInfrastructureServices(builder.Configuration)
                     .ConfigurePersistenceServices(builder.Configuration);
 
-    // versioning 
-    builder.Services.AddApiVersioning(options =>
-    {
-        options.DefaultApiVersion = new ApiVersion(1, 0);
-        options.AssumeDefaultVersionWhenUnspecified = true;
-        options.ReportApiVersions = true;
-    });
-
     // 
     builder.Host.UseSerilog((context, services, loggerConfiguration) =>
     {
@@ -57,8 +53,30 @@ try
     }); // Full Serilog integration
 
     // Add services to the container.
-
     builder.Services.AddControllers();
+
+    // Add API versioning services
+    builder.Services.AddApiVersioning(options =>
+    {
+        // set the default version incase no version value was set
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.ReportApiVersions = true;
+
+        // tells the app to look for the version segment in the URL path
+        options.ApiVersionReader = new UrlSegmentApiVersionReader();
+    })
+     .AddMvc(options =>
+     {
+         options.Conventions.Add(new VersionByNamespaceConvention());
+     })
+     .AddApiExplorer(options =>
+     {
+         // Format the version group name for tools like (e.g, 'v1')
+         options.GroupNameFormat = "'v'V";
+         options.SubstituteApiVersionInUrl = true;
+     });
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -74,7 +92,7 @@ try
     var app = builder.Build();
 
     Log.Information("Running in {Environment}", app.Environment.EnvironmentName);
-    Log.Information("Base URL: ", Environment.GetEnvironmentVariable("BASE_URL"));
+    Log.Information("Base URL: {URL}", Environment.GetEnvironmentVariable("BASE_URL"));
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

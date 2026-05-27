@@ -1,14 +1,19 @@
-﻿using HR_LeaveManagement.Application.DTOs.LeaveType;
+﻿using Asp.Versioning;
+using HR_LeaveManagement.Application.Contracts.Attributes.Permissions;
+using HR_LeaveManagement.Application.DTOs.LeaveType;
 using HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
+using HR_LeaveManagement.Application.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
-namespace HR_LeaveManagement.Api.Controllers
+namespace HR_LeaveManagement.Api.Controllers.V1
 {
-    [Route("api/v1/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class LeaveTypesController : ControllerBase
     {
@@ -36,6 +41,8 @@ namespace HR_LeaveManagement.Api.Controllers
         }
 
         // POST: api/LeaveTypes
+        //[Authorize]
+        //[HasPermission(Permissions.Leave.Create)]
         [HttpPost]
 
         public async Task<IActionResult> Create([FromBody] CreateLeaveTypeDto request)

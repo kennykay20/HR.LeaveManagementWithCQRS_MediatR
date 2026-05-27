@@ -49,5 +49,13 @@ namespace HR_LeaveManagement.Persistence.Repositories
 
             return items;
         }
+
+        public async Task<User?> GetUserRolesByUserId(int userId)
+        {
+            var user = await _dbContext.Users.Include(user => user.UserRoles)
+                            .FirstOrDefaultAsync(user => user.Id == userId);
+
+            return user ?? null;
+        }
     }
 }

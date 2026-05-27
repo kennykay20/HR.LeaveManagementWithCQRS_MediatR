@@ -60,7 +60,7 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Commands
 
                 response.Success = true;
                 response.Message = "User created successfully";
-                response.Errors = null;
+                response.Errors = null!;
                 response.Id = result.Id;
                 response.Data.Id = result.Id;
 

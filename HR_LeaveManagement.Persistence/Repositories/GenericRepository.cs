@@ -50,7 +50,8 @@ namespace HR_LeaveManagement.Persistence.Repositories
         }
         public async Task Delete(T entity)
         {
-            _dbContext.Set<T>().Remove(entity);
+            //_dbContext.Set<T>().Remove(entity);
+            _dbContext.Entry(entity).CurrentValues.SetValues(entity);
             await _dbContext.SaveChangesAsync();
         }
     }

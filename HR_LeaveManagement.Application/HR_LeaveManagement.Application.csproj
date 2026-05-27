@@ -24,8 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\Role\Validators\" />
+    <Folder Include="DTOs\Role\NewFolder\" />
     <Folder Include="Features\Auths\Requests\Queries\" />
+    <Folder Include="Features\Permissions\Handlers\Queries\" />
   </ItemGroup>
 
 </Project>
