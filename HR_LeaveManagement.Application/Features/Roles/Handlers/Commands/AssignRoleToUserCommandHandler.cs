@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HR_LeaveManagement.Application.Features.Roles.Handlers.Commands
 {
-    public class AssignRoleToUserCommandHandler : IRequestHandler<AssignRoleToUserCommand, BaseCommandResponse<UserRole>>
+    public class AssignRoleToUserCommandHandler : IRequestHandler<AssignRoleToUserCommand, BaseCommandResponse<string>>
     {
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IUserRepository _userRepository;
@@ -28,12 +28,12 @@ namespace HR_LeaveManagement.Application.Features.Roles.Handlers.Commands
             _userRepository = userRepository;
             _logger = logger;
         }
-        public async Task<BaseCommandResponse<UserRole>> Handle(AssignRoleToUserCommand request, CancellationToken cancellationToken)
+        public async Task<BaseCommandResponse<string>> Handle(AssignRoleToUserCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Assign role to a user ");
             try
             {
-                var response = new BaseCommandResponse<UserRole>();
+                var response = new BaseCommandResponse<string>();
                 var userId = request.assignRoleUserDto.UserId;
                 var roleIds = request.assignRoleUserDto.RoleIds;
 
@@ -73,8 +73,8 @@ namespace HR_LeaveManagement.Application.Features.Roles.Handlers.Commands
             }
             catch (Exception ex)
             {
-                _logger.LogError("error occur {error}", ex.Message);
-                throw new NotImplementedException();
+                _logger.LogError("An error occur while assigning a role to a user {error}", ex.Message);
+                throw new Exception(ex.Message);
             }
         }
     }

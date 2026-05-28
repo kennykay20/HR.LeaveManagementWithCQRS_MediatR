@@ -36,37 +36,45 @@ namespace HR_LeaveManagement.Application.Features.Roles.Handlers.Queries
             var response = new BaseCommandResponse<List<RoleDto>>();
             _logger.LogInformation($"Get user roles by user id {userId}");
 
-            var roles = await _userRoleRepository.GetUserRolesByUserId(userId);
-
-            foreach (var role in roles)
+            try
             {
-                _logger.LogInformation($"before mapping {role.Id}, and {role.Name}");
-                Console.WriteLine($"{role.Id} - {role.Name}");
-            }
-            _logger.LogInformation($"Get user roles by user id {roles[0].Id} and id {roles[1].Id}");
-            var result = _mapper.Map<List<RoleDto>>(roles);
+                var roles = await _userRoleRepository.GetUserRolesByUserId(userId);
 
-            foreach (var role in result)
-            {
-                _logger.LogInformation($"after mapping {role.Id}, and {role.Name}");
-                Console.WriteLine($"{role.Id} - {role.Name}");
-            }
-            _logger.LogInformation($"after mapping roles response - count = {result.Count}");
+                foreach (var role in roles)
+                {
+                    _logger.LogInformation($"before mapping {role.Id}, and {role.Name}");
+                    Console.WriteLine($"{role.Id} - {role.Name}");
+                }
+                _logger.LogInformation($"Get user roles by user id {userId}: {roles.Count}");
+                var result = _mapper.Map<List<RoleDto>>(roles);
 
-            if (result.Count < 1)
-            {
-                response.Success = false;
-                response.Message = "";
-                response.Data = null!;
+                foreach (var role in result)
+                {
+                    _logger.LogInformation($"after mapping {role.Id}, and {role.Name}");
+                    Console.WriteLine($"{role.Id} - {role.Name}");
+                }
+                _logger.LogInformation($"after mapping roles response - count = {result.Count}");
+
+                if (result == null || result.Count == 0)
+                {
+                    response.Success = false;
+                    response.Message = $"No roles found for user {userId}";
+                    response.Data = new List<RoleDto>();
+                    return response;
+                }
+
+                response.Success = true;
+                response.Message = $"Roles details of user {userId}";
+                response.Data = result;
+                response.Errors = null!;
+
                 return response;
             }
-
-            response.Success = true;
-            response.Message = $"Roles details of user {userId}";
-            response.Data = result;
-            response.Errors = null!;
-
-            return response;
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occur while getting a user roles - {ex.Message}");
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

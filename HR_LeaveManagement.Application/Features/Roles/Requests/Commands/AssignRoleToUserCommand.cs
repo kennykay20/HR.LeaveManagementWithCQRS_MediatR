@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HR_LeaveManagement.Application.Features.Roles.Requests.Commands
 {
-    public class AssignRoleToUserCommand : IRequest<BaseCommandResponse<UserRole>>
+    public class AssignRoleToUserCommand : IRequest<BaseCommandResponse<string>>
     {
         public AssignRoleToUserDto assignRoleUserDto { get; set; }
     }

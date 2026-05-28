@@ -131,6 +131,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             }
             catch(Exception ex)
             {
+                _logger.LogError($"An error occur while login as a user {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }

@@ -43,7 +43,7 @@ namespace HR_LeaveManagement.Api.Controllers.V1
             return Ok(result);
         }
 
-        [HttpPost("assign")]
+        [HttpPost("assign/user")]
         public async Task<IActionResult> AssignRoleToUser([FromBody] AssignRoleToUserDto dto)
         {
             var command = new AssignRoleToUserCommand { assignRoleUserDto = dto };

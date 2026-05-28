@@ -138,7 +138,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error registering a user ", ex.Message);
+                Console.WriteLine("An error occur, registering a user ", ex.Message);
                 throw new Exception(ex.Message);
             }
         }

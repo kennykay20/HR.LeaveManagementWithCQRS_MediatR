@@ -37,47 +37,55 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Queries
 
             _logger.LogInformation($"PageNum - {pageNumber}, and pageSize - {pageSize}");
 
-            if (pageNumber < 1 || pageSize < 1)
+            try
             {
-                _logger.LogInformation("Invalid pagination parameters");
-                response.Success = false;
-                response.Message = "Invalid pagination parameters.";
-                response.Data = null!;
-                response.Errors = null!;
-                return response;
+                if (pageNumber < 1 || pageSize < 1)
+                {
+                    _logger.LogInformation("Invalid pagination parameters");
+                    response.Success = false;
+                    response.Message = "Invalid pagination parameters.";
+                    response.Data = null!;
+                    response.Errors = null!;
+                    return response;
+                }
+
+                var results = await _userRepository.GetUserPageListAsync(pageNumber, pageSize);
+
+                var total = results.Count;
+                _logger.LogInformation($"total number of users - {total}");
+
+                if (results.Count < 1)
+                {
+                    response.Success = false;
+                    response.Message = "No data";
+                    response.Count = 0;
+                    response.PageNumber = pageNumber;
+                    response.PageSize = pageSize;
+                    response.TotalPages = total;
+                    response.Data = null!;
+                    return response;
+                }
+
+
+                _logger.LogInformation($"total counts = {total}");
+
+                return new ApiListPageResponse<List<UserListDto>>()
+                {
+                    Success = true,
+                    Errors = null!,
+                    Message = $"Total number of results = {total}",
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    Count = total,
+                    TotalPages = (int)Math.Ceiling((double)total / pageSize),
+                    Data = _mapper.Map<List<UserListDto>>(results)
+                };
             }
-
-            var results = await _userRepository.GetUserPageListAsync(pageNumber, pageSize);
-
-            var total = results.Count;
-            _logger.LogInformation($"total number of users - {total}");
-
-            if (results.Count < 1)
+            catch(Exception ex)
             {
-                response.Success = false;
-                response.Message = "No data";
-                response.Count = 0;
-                response.PageNumber = pageNumber;
-                response.PageSize = pageSize;
-                response.TotalPages = total;
-                response.Data = null!;
-                return response;
+                _logger.LogError($"An error occur {ex.Message}");
+                throw new Exception(ex.Message);
             }
-
-            
-            _logger.LogInformation($"total counts = {total}");
-
-            return new ApiListPageResponse<List<UserListDto>>()
-            {
-                Success = true,
-                Errors = null!,
-                Message = $"Total number of results = {total}",
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                Count = total,
-                TotalPages = (int)Math.Ceiling((double)total / pageSize),
-                Data = _mapper.Map<List<UserListDto>>(results)
-            };            
         }
     }
 }

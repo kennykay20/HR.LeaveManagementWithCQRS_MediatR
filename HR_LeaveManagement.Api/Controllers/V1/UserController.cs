@@ -12,7 +12,7 @@ namespace HR_LeaveManagement.Api.Controllers.V1
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -32,6 +32,5 @@ namespace HR_LeaveManagement.Api.Controllers.V1
             var result = await _mediator.Send(command);
             return Ok(result);
         }
-
     }
 }

@@ -50,8 +50,8 @@ namespace HR_LeaveManagement.Application.Features.Roles.Handlers.Queries
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error occur {error}", ex.Message);
-                throw new NotImplementedException(ex.Message);
+                _logger.LogError("An error occur while getting roles {error}", ex.Message);
+                throw new Exception(ex.Message);
             }
         }
     }

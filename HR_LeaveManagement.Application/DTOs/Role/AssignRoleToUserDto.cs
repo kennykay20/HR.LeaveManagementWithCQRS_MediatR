@@ -9,6 +9,6 @@ namespace HR_LeaveManagement.Application.DTOs.Role
     public class AssignRoleToUserDto
     {
         public int UserId { get; set; }
-        public List<int> RoleIds { get; set; } = new();
+        public List<int> RoleIds { get; set; } = new List<int>();
     }
 }

@@ -10,5 +10,6 @@ namespace HR_LeaveManagement.Application.Contracts.Persistences
 {
     public interface IRoleRepository : IGenericRepository<Role>
     {
+        Task<Role?> GetRolePermissionsByRoleId(int roleId);
     }
 }

@@ -48,8 +48,8 @@ namespace HR_LeaveManagement.Application.Features.Permissions.Handlers.Queries
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An error occur {ex.Message}");
-                throw new NotImplementedException(ex.Message);
+                _logger.LogError($"An error occur while getting permission details {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
     }

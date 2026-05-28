@@ -78,7 +78,8 @@ namespace HR_LeaveManagement.Application.Features.Permissions.Handlers.Commands
             }
             catch(Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                _logger.LogError($"An error occur while assding a new permission - {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
     }

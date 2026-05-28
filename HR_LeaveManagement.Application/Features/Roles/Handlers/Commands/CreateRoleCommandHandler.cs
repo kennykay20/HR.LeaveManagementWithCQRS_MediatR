@@ -69,7 +69,8 @@ namespace HR_LeaveManagement.Application.Features.Roles.Handlers.Commands
             }
             catch(Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                _logger.LogError($"An error occur while adding a new role");
+                throw new Exception(ex.Message);
             }
         }
     }

@@ -10,5 +10,8 @@ namespace HR_LeaveManagement.Application.Contracts.Persistences
 {
     public interface IRolePermissionRepository : IGenericRepository<RolePermission>
     {
+        Task RemoveDataRange(ICollection<RolePermission> rolePermissions);
+        Task AddDataRange(IEnumerable<RolePermission> rolePermissions);
+        Task<List<Permission>> GetRolePermissionsByRoleId(int roleId);
     }
 }

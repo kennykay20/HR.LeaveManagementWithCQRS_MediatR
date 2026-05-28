@@ -7,6 +7,7 @@ using HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR_LeaveManagement.Application.Responses;
 using HR_LeaveManagement.Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,46 +21,60 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
     {
         private readonly ILeaveTypeRepository _leaveTypeRepo;
         private readonly IMapper _mapper;
+        private readonly ILogger<CreateLeaveTypeCommandHandler> _logger;
 
-        public CreateLeaveTypeCommandHandler(ILeaveTypeRepository leaveTypeRepo, IMapper mapper)
+        public CreateLeaveTypeCommandHandler(
+            ILeaveTypeRepository leaveTypeRepo, 
+            IMapper mapper, 
+            ILogger<CreateLeaveTypeCommandHandler> logger
+            )
         {
             _leaveTypeRepo = leaveTypeRepo;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<BaseCommandResponse<LeaveTypeDto>> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse<LeaveTypeDto>();
             var validator = new CreateLeaveTypeDtoValidator();
-            var validationResult = await validator.ValidateAsync(request.LeaveTypeDto);
-
-            if (!validationResult.IsValid)
+            try
             {
-                response.Success = false;
-                response.Message = "Creation failed.";
-                response.Errors = validationResult.Errors.Select(er => er.ErrorMessage).ToList();
-                response.Data = null;
+                var validationResult = await validator.ValidateAsync(request.LeaveTypeDto);
+
+                if (!validationResult.IsValid)
+                {
+                    response.Success = false;
+                    response.Message = "Creation failed.";
+                    response.Errors = validationResult.Errors.Select(er => er.ErrorMessage).ToList();
+                    response.Data = null;
+                    return response;
+                }
+                //check name already exist
+                var existLeaveType = await _leaveTypeRepo.GetLeaveTypeByName(request.LeaveTypeDto.Name);
+                if (existLeaveType != null)
+                {
+                    response.Success = false;
+                    response.Message = "Name already exist";
+                    response.Data = null;
+                    return response;
+                }
+                var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
+                var leaveResponse = await _leaveTypeRepo.Add(leaveType);
+
+                var result = _mapper.Map<LeaveTypeDto>(leaveResponse);
+
+                response.Success = true;
+                response.Message = "Creation successful.";
+                response.Id = result.Id;
+                response.Data = result ?? null!;
+
                 return response;
             }
-            //check name already exist
-            var existLeaveType = await _leaveTypeRepo.GetLeaveTypeByName(request.LeaveTypeDto.Name);
-            if(existLeaveType != null)
+            catch(Exception ex)
             {
-                response.Success = false;
-                response.Message = "Name already exist";
-                response.Data = null;
-                return response;
+                _logger.LogError($"An error occur, while adding a new leave type {ex.Message}");
+                throw new Exception(ex.Message);
             }
-            var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
-            var leaveResponse = await _leaveTypeRepo.Add(leaveType);
-
-            var result = _mapper.Map<LeaveTypeDto>(leaveResponse);
-
-            response.Success = true;
-            response.Message = "Creation successful.";
-            response.Id = result.Id;
-            response.Data = result ?? null!;
-
-            return response;
         }
     }
 }

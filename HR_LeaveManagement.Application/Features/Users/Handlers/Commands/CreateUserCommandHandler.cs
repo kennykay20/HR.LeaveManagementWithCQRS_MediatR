@@ -77,7 +77,7 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Commands
             catch (Exception ex)
             {
                 _logger.LogError($"An error occur {ex.Message}");
-                throw new NotImplementedException(ex.Message);
+                throw new Exception(ex.Message);
             }
         }
     }
