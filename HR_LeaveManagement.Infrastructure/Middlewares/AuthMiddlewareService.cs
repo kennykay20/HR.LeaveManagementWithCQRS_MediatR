@@ -70,10 +70,10 @@ namespace HR_LeaveManagement.Infrastructure.Middlewares
             var result = jwtService.ValidateAndExtractToken(rawToken);
             if (result != null) 
             {
-                context.Items["Email"] = result.Email ?? "";
-                context.Items["UserId"] = result.Id ?? "";
-                context.Items["Roles"] = result.Roles ?? "";
-                context.Items["Permissions"] = result.Permissions ?? "";
+                //context.Items["Email"] = result.Email ?? "";
+                //context.Items["UserId"] = result.Id ?? "";
+                //context.Items["Roles"] = result.Roles ?? "";
+                //context.Items["Permissions"] = result.Permissions ?? "";
                 return true;
             }
             return false;

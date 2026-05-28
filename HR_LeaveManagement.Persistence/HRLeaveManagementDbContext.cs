@@ -25,6 +25,7 @@ namespace HR_LeaveManagement.Persistence
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<AuditTrail> AuditTrails { get; set; }
 
         // this automatically registers all configurations.
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -10,6 +10,7 @@ namespace HR_LeaveManagement.Application.Contracts.Attributes.Permissions
     public class HasPermissionAttribute : AuthorizeAttribute
     {
         public HasPermissionAttribute(string permission)
+            : base(permission)
         {
             Policy = permission;
         }
