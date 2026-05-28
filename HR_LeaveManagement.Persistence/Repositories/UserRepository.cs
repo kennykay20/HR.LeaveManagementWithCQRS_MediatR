@@ -22,7 +22,7 @@ namespace HR_LeaveManagement.Persistence.Repositories
 
         public async Task<User?> GetUserByEmail(string email)
         {
-            var result = await _dbContext.Users.Where((user) => user.Email == email).FirstOrDefaultAsync();
+            var result = await _dbContext.Users.Where((user) => user.Email == email && user.IsDeleted == false).FirstOrDefaultAsync();
             return result ?? null;
         }
 
@@ -33,7 +33,7 @@ namespace HR_LeaveManagement.Persistence.Repositories
                 // throw invalid pagination parameter
             }
 
-            var users = _dbContext.Users.AsQueryable();
+            var users = _dbContext.Users.Where(x => x.IsDeleted == false).AsQueryable();
             //var total = await users.CountAsync();
 
             foreach (var item in users)
@@ -53,7 +53,7 @@ namespace HR_LeaveManagement.Persistence.Repositories
         public async Task<User?> GetUserRolesByUserId(int userId)
         {
             var user = await _dbContext.Users.Include(user => user.UserRoles)
-                            .FirstOrDefaultAsync(user => user.Id == userId);
+                            .FirstOrDefaultAsync(user => user.Id == userId && user.IsDeleted == false);
 
             return user ?? null;
         }

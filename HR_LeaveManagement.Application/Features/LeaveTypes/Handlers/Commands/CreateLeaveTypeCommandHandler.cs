@@ -50,13 +50,14 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 return response;
             }
             var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
-            var result = await _leaveTypeRepo.Add(leaveType);
-            
+            var leaveResponse = await _leaveTypeRepo.Add(leaveType);
+
+            var result = _mapper.Map<LeaveTypeDto>(leaveResponse);
 
             response.Success = true;
             response.Message = "Creation successful.";
             response.Id = result.Id;
-            response.Data.Id = result.Id;
+            response.Data = result ?? null!;
 
             return response;
         }

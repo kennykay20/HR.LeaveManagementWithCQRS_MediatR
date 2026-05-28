@@ -14,6 +14,7 @@ namespace HR_LeaveManagement.Api.Controllers.V1
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize]
     [ApiController]
     public class LeaveTypesController : ControllerBase
     {
@@ -41,7 +42,6 @@ namespace HR_LeaveManagement.Api.Controllers.V1
         }
 
         // POST: api/LeaveTypes
-        //[Authorize]
         //[HasPermission(Permissions.Leave.Create)]
         [HttpPost]
 

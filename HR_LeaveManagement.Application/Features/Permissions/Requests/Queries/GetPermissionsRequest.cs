@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 
 namespace HR_LeaveManagement.Application.Features.Permissions.Requests.Queries
 {
-    public class GetPermissionDetailsByIdRequest : IRequest<BaseCommandResponse<PermissionDto>>
+    public class GetPermissionsRequest : IRequest<BaseCommandResponse<List<PermissionDto>>>
     {
-        public int Id { get; set; }
     }
 }

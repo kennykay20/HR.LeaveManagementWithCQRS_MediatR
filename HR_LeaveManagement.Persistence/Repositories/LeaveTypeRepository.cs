@@ -21,7 +21,7 @@ namespace HR_LeaveManagement.Persistence.Repositories
 
         public async Task<LeaveType> GetLeaveTypeByName(string name)
         {
-            var entity = await _dbContext.LeaveTypes.FirstOrDefaultAsync(data => data.Name.ToLower() == name.ToLower());
+            var entity = await _dbContext.LeaveTypes.FirstOrDefaultAsync(data => data.Name.ToLower() == name.ToLower() && data.IsDeleted == false);
             return entity;
         }
     }

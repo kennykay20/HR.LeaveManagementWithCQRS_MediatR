@@ -6,11 +6,15 @@ using HR_LeaveManagement.Application.Contracts.Attributes.Permissions;
 using HR_LeaveManagement.Application.Models;
 using HR_LeaveManagement.Infrastructure;
 using HR_LeaveManagement.Infrastructure.Helpers;
+using HR_LeaveManagement.Infrastructure.Middlewares;
 using HR_LeaveManagement.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 try
 {
@@ -77,6 +81,33 @@ try
          options.SubstituteApiVersionInUrl = true;
      });
 
+    // add authentication bearer 
+    builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var jwtSettings = builder.Configuration
+            .GetSection("JwtSettings")
+            .Get<JwtSettings>();
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = jwtSettings!.Issuer,
+            ValidAudience = jwtSettings.Audience,
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings.SecretKey)
+            ),
+
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -114,11 +145,13 @@ try
 
     app.UseCors("CorsPolicy");
 
-    //app.UseAuthentication();
+    app.UseAuthentication();
 
     app.UseAuthorization();
     
     app.MapControllers();
+
+    //app.UseMiddleware<AuthMiddlewareService>();
 
     using (var scope = app.Services.CreateScope())
     {

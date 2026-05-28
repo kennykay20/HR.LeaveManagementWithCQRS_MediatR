@@ -38,7 +38,9 @@ namespace HR_LeaveManagement.Api.Controllers.V1
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRole(int id)
         {
-            return Ok();
+            var command = new GetRoleDetailsByIdRequest { Id = id };
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpPost("assign")]

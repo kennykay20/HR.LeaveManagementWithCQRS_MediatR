@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using HR_LeaveManagement.Application.DTOs.Permission;
 using HR_LeaveManagement.Application.Features.Permissions.Requests.Commands;
+using HR_LeaveManagement.Application.Features.Permissions.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +31,16 @@ namespace HR_LeaveManagement.Api.Controllers.V1
         [HttpGet]
         public async Task<IActionResult> GetPermissions()
         {
-            return Ok();
+            var result = await _mediator.Send(new GetPermissionsRequest());
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPermission(int id)
         {
-            return Ok();
+            var command = new GetPermissionDetailsByIdRequest { Id = id };
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
     }
 }

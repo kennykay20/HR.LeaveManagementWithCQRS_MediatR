@@ -23,7 +23,7 @@ namespace HR_LeaveManagement.Persistence.Repositories
         {
             var entity = await _dbContext.LeaveAllocations
                 .Include(data => data.LeaveType)
-                .FirstOrDefaultAsync(data => data.Id == id);
+                .FirstOrDefaultAsync(data => data.Id == id && data.IsDeleted == false);
             return entity;
         }
 

@@ -12,6 +12,7 @@ namespace HR_LeaveManagement.Api.Controllers.V1
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -23,7 +24,6 @@ namespace HR_LeaveManagement.Api.Controllers.V1
         }
 
         // GET: api/v1/request
-        //[Authorize]
         //[HasPermission(Permissions.Leave.Create)]
         [HttpGet]
         public async Task<IActionResult> Get(int pageNum, int pageSize)

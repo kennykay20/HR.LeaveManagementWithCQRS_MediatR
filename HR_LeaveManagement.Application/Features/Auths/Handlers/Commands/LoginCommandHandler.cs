@@ -20,36 +20,27 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
     public class LoginCommandHandler : IRequestHandler<LoginCommand, TokenResponse>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
         private readonly IJwtService _jwtService;
         private readonly IClaimsService _claimsService;
-        private readonly IOtpService _otpService;
-        private readonly IConfiguration _configuration;
         private readonly IPasswordHelper _passwordHelper;
         private readonly ILogger<LoginCommandHandler> _logger;
 
         public LoginCommandHandler(
             IUserRepository userRepository, 
-            IMapper mapper, 
             IJwtService jwtService,
             IClaimsService claimsService,
-            IOtpService otpService,
-            IConfiguration configuration,
             IPasswordHelper passwordHelper,
             ILogger<LoginCommandHandler> logger
             )
         {
             _userRepository = userRepository;
-            _mapper = mapper;
             _jwtService = jwtService;
             _claimsService = claimsService;
-            _otpService = otpService;
-            _configuration = configuration;
             _passwordHelper = passwordHelper;
             _logger = logger;
         }
 
-        public IClaimsService ClaimsService { get; }
+        //public IClaimsService ClaimsService { get; }
 
         public async Task<TokenResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
         {

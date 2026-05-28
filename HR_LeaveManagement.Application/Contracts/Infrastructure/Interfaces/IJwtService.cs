@@ -1,4 +1,5 @@
-﻿using HR_LeaveManagement.Domain.Entities;
+﻿using HR_LeaveManagement.Application.DTOs;
+using HR_LeaveManagement.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace HR_LeaveManagement.Application.Contracts.Infrastructure.Interfaces
         string[] GetSecretKeys();
         string GenerateAccessToken(User user, IList<Claim> claims);
         string GenerateRefreshToken();
+        JwtValidationResultDto ValidateAndExtractToken(string jwtToken);
     }
 }
