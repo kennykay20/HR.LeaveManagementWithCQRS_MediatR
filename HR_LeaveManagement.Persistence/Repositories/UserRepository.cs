@@ -26,28 +26,37 @@ namespace HR_LeaveManagement.Persistence.Repositories
             return result ?? null;
         }
 
+        public async Task<User?> GetUserById(int userId)
+        {
+            var result = await _dbContext.Users.Where((user) => user.Id == userId && user.IsDeleted == false).FirstOrDefaultAsync();
+            return result ?? null;
+        }
+
         public async Task<List<User>> GetUserPageListAsync(int pageNumber, int pageSize)
         {
-            if (pageNumber < 1 || pageSize < 1)
-            {
-                // throw invalid pagination parameter
-            }
 
-            var users = _dbContext.Users.Where(x => x.IsDeleted == false).AsQueryable();
-            //var total = await users.CountAsync();
+            //var users = _dbContext.Users.Where(x => x.IsDeleted == false).AsQueryable();
+            ////var total = await users.CountAsync();
 
-            foreach (var item in users)
-            {
-                item.Password = "";
-                item.RegistrationToken = "";
-            }
+            //foreach (var item in users)
+            //{
+            //    item.Password = "";
+            //    item.RegistrationToken = "";
+            //}
 
-            var items = await users
+            var items = await _dbContext.Users.Where(x => !x.IsDeleted)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
             return items;
+        }
+
+        public async Task<int> GetTotalUsersCountAsync()
+        {
+            return await _dbContext.Users
+                .Where(x => !x.IsDeleted)
+                .CountAsync();
         }
 
         public async Task<User?> GetUserRolesByUserId(int userId)

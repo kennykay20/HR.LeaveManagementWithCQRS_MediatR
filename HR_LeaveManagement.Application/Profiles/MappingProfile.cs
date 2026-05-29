@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HR_LeaveManagement.Application.DTOs.Audit;
 using HR_LeaveManagement.Application.DTOs.Auth;
 using HR_LeaveManagement.Application.DTOs.LeaveAllocation;
 using HR_LeaveManagement.Application.DTOs.LeaveRequest;
@@ -33,6 +34,7 @@ namespace HR_LeaveManagement.Application.Profiles
             CreateMap<Role, RoleDto>().ReverseMap();
             CreateMap<Permission, PermissionDto>().ReverseMap();
             CreateMap<CreatePermissionDto, Permission>().ReverseMap();
+            CreateMap<AuditTrail, AuditDto>().ReverseMap();
         }
     }
 }

@@ -11,7 +11,9 @@ namespace HR_LeaveManagement.Application.Contracts.Persistences
     public interface IUserRepository : IGenericRepository<User>
     {
         Task<User?> GetUserByEmail(string email);
+        Task<User?> GetUserById(int userId);
         Task<List<User>> GetUserPageListAsync(int pageNumber, int pageSize);
+        Task<int> GetTotalUsersCountAsync();
         Task<User?> GetUserRolesByUserId(int userId);
     }
 }

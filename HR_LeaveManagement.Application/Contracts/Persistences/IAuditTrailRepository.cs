@@ -10,5 +10,7 @@ namespace HR_LeaveManagement.Application.Contracts.Persistences
 {
     public interface IAuditTrailRepository : IGenericRepository<AuditTrail>
     {
+        Task<List<AuditTrail>> GetAuditPageListAsync(int pageNumber, int pageSize);
+        Task<int> GetTotalAuditCountAsync();
     }
 }

@@ -13,11 +13,11 @@ namespace HR_LeaveManagement.Application.DTOs.User
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
 
-        [Required]
+        //[Required]
         public string Email { get; set; }
 
-        [Required]
-        public string Password { get; set; }
+        //[Required]
+        //public string Password { get; set; }
         //public string Roles { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public bool IsNewUser { get; set; }

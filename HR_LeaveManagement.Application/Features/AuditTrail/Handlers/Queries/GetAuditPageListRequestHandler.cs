@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using HR_LeaveManagement.Application.Contracts.Persistences;
+using HR_LeaveManagement.Application.DTOs.Audit;
 using HR_LeaveManagement.Application.DTOs.User;
-using HR_LeaveManagement.Application.Features.Users.Requests.Queries;
+using HR_LeaveManagement.Application.Features.AuditTrail.Requests.Queries;
 using HR_LeaveManagement.Application.Responses;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -12,26 +13,26 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HR_LeaveManagement.Application.Features.Users.Handlers.Queries
+namespace HR_LeaveManagement.Application.Features.AuditTrail.Handlers.Queries
 {
-    public class GetUserPageListRequestHandler : IRequestHandler<GetUserPageListRequest, ApiListPageResponse<List<UserListDto>>>
+    public class GetAuditPageListRequestHandler : IRequestHandler<GetAuditPageListRequest, ApiListPageResponse<List<AuditDto>>>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IAuditTrailRepository _auditTrailRepo;
         private readonly IMapper _mapper;
-        private readonly ILogger<GetUserPageListRequestHandler> _logger;
+        private readonly ILogger<GetAuditPageListRequestHandler> _logger;
 
-        public GetUserPageListRequestHandler(
-            IUserRepository userRepository, 
+        public GetAuditPageListRequestHandler(
+            IAuditTrailRepository auditTrailRepo, 
             IMapper mapper,
-            ILogger<GetUserPageListRequestHandler> logger)
+            ILogger<GetAuditPageListRequestHandler> logger)
         {
-            _userRepository = userRepository;
+            _auditTrailRepo = auditTrailRepo;
             _mapper = mapper;
             _logger = logger;
         }
-        public async Task<ApiListPageResponse<List<UserListDto>>> Handle(GetUserPageListRequest request, CancellationToken cancellationToken)
+        public async Task<ApiListPageResponse<List<AuditDto>>> Handle(GetAuditPageListRequest request, CancellationToken cancellationToken)
         {
-            var response = new ApiListPageResponse<List<UserListDto>>();
+            var response = new ApiListPageResponse<List<AuditDto>>();
             var pageNumber = request.PageNumber;
             var pageSize = request.PageSize;
 
@@ -49,10 +50,10 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Queries
                     return response;
                 }
 
-                var results = await _userRepository.GetUserPageListAsync(pageNumber, pageSize);
+                var results = await _auditTrailRepo.GetAuditPageListAsync(pageNumber, pageSize);
 
-                var totalCount = await _userRepository.GetTotalUsersCountAsync();
-                _logger.LogInformation($"total number of users - {totalCount}");
+                var totalCount = await _auditTrailRepo.GetTotalAuditCountAsync();
+                _logger.LogInformation($"total count - {totalCount}");
 
                 if (results == null || results.Count == 0)
                 {
@@ -61,15 +62,15 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Queries
                     response.Count = 0;
                     response.PageNumber = pageNumber;
                     response.PageSize = pageSize;
-                    response.TotalPages = totalCount/pageSize;
+                    response.TotalPages = totalCount / pageSize;
+                    response.TotalCount = totalCount;
                     response.Data = null!;
                     return response;
                 }
 
-
                 _logger.LogInformation($"total counts = {totalCount}");
 
-                return new ApiListPageResponse<List<UserListDto>>()
+                return new ApiListPageResponse<List<AuditDto>>()
                 {
                     Success = true,
                     Errors = null!,
@@ -77,14 +78,16 @@ namespace HR_LeaveManagement.Application.Features.Users.Handlers.Queries
                     PageNumber = pageNumber,
                     PageSize = pageSize,
                     Count = results.Count,
-                    TotalCount = totalCount,
                     TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
-                    Data = _mapper.Map<List<UserListDto>>(results)
+                    TotalCount = totalCount,
+                    Data = _mapper.Map<List<AuditDto>>(results)
                 };
+
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogError($"An error occur {ex.Message}");
+                _logger.LogError($"An error occur fetching an audit trail {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }

@@ -48,5 +48,17 @@ namespace HR_LeaveManagement.Api.Controllers.V1
         {
             return Ok();
         }
+
+        [HttpPost("otp")]
+        public async Task<IActionResult> GenerateOtp([FromBody]string email)
+        {
+            return Ok();
+        }
+
+        [HttpPost("access-token")]
+        public async Task<IActionResult> GenerateAccessToken([FromBody]string email)
+        {
+            return Ok();
+        }
     }
 }
