@@ -34,16 +34,6 @@ namespace HR_LeaveManagement.Persistence.Repositories
 
         public async Task<List<User>> GetUserPageListAsync(int pageNumber, int pageSize)
         {
-
-            //var users = _dbContext.Users.Where(x => x.IsDeleted == false).AsQueryable();
-            ////var total = await users.CountAsync();
-
-            //foreach (var item in users)
-            //{
-            //    item.Password = "";
-            //    item.RegistrationToken = "";
-            //}
-
             var items = await _dbContext.Users.Where(x => !x.IsDeleted)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)

@@ -30,6 +30,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
         private readonly IEmailJobService _emailJobService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<RegisterUserCommandHandler> _logger;
+        private readonly IAuditService _auditService;
 
         public RegisterUserCommandHandler(
             IUserRepository userRepository, 
@@ -38,7 +39,8 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             IOtpService otpService,
             IEmailJobService emailJobService,
             IConfiguration configuration,
-            ILogger<RegisterUserCommandHandler> logger
+            ILogger<RegisterUserCommandHandler> logger,
+            IAuditService auditService
             )
         {
             _userRepository = userRepository;
@@ -48,6 +50,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             _emailJobService = emailJobService;
             _configuration = configuration;
             _logger = logger;
+            _auditService = auditService;
         }
         public async Task<BaseCommandResponse<UserDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
@@ -56,7 +59,9 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             var validationResult = await validator.ValidateAsync(request.registerDto);
             var email = request.registerDto.Email;
             var password = request.registerDto.Password;
-            _logger.LogInformation($"email is {email}, and password = {password} ");
+            var registerPath = "/api/v1/Auth/register";
+
+            _logger.LogInformation($"registration for email is {email} ");
             if (!validationResult.IsValid)
             {
                 response.Success = false;
@@ -128,6 +133,8 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 _logger.LogInformation($"user id = {result.Id}, email = {result.Email}, Otp = {result.Otp}, expiry time = {result.OtpExpiry}, and lastname = {result.LastName}");
                 // update the user table
                 await _userRepository.Update(result);
+
+                await _auditService.LogAsync(result.Id.ToString(), email, registerPath);
 
                 _logger.LogInformation($"updated at user id = {result.Id}, email = {result.Email}, updatedAt = {result.LastModifiedBy}, and lastname = {result.LastName}");
                 response.Success = true;

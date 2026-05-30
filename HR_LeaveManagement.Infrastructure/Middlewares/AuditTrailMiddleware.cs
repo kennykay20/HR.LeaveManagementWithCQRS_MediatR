@@ -30,27 +30,35 @@ namespace HR_LeaveManagement.Infrastructure.Middlewares
         {
             await _next(context);
 
+            logger.LogInformation("inside the auth middleware ");
             var path = context.Request.Path.ToString();
+            var loginPath = "/api/v1/Auth/login";
+            var registerPath = "/api/v1/Auth/register";
+
+            logger.LogInformation($"path {path}, loginPath - {loginPath}, and registerPaht - {registerPath}");
 
             if (context.Request.Method == "GET")
                 return;
 
-            var audit = new AuditTrail
+            AuditTrail audit = new AuditTrail();
+
+            if (path != loginPath || path != registerPath)
             {
-                Id = Guid.NewGuid(),
-                UserId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                Email = context.User.FindFirst(ClaimTypes.Email)?.Value,
-                Action = $"{context.Request.Method} {path}",
-                Method = context.Request.Method,
-                Path = path,
-                StatusCode = context.Response.StatusCode,
-                IpAddress = context.Connection.RemoteIpAddress?.ToString(),
-                CreatedAt = DateTime.UtcNow
-            };
+                logger.LogInformation("not login or register ");
+                audit.Id = Guid.NewGuid();
+                audit.UserId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                audit.Email = context.User.FindFirst(ClaimTypes.Email)?.Value;
+                audit.Action = $"{context.Request.Method} {path}";
+                audit.Method = context.Request.Method;
+                audit.Path = path;
+                audit.StatusCode = context.Response.StatusCode;
+                audit.IpAddress = context.Connection.RemoteIpAddress?.ToString();
+                audit.CreatedAt = DateTime.UtcNow;
 
-            await auditTrailRepo.Add(audit);
+                await auditTrailRepo.Add(audit);
 
-            logger.LogInformation("Audit trail saved");
+                logger.LogInformation("Audit trail saved");
+            }
         }
     }
 }

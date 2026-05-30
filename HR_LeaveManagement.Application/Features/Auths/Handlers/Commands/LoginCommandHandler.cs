@@ -4,6 +4,7 @@ using HR_LeaveManagement.Application.Contracts.Persistences;
 using HR_LeaveManagement.Application.DTOs.Auth.Validators;
 using HR_LeaveManagement.Application.Features.Auths.Requests.Commands;
 using HR_LeaveManagement.Application.Responses;
+using HR_LeaveManagement.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -24,13 +25,15 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
         private readonly IClaimsService _claimsService;
         private readonly IPasswordHelper _passwordHelper;
         private readonly ILogger<LoginCommandHandler> _logger;
+        private readonly IAuditService _auditService;
 
         public LoginCommandHandler(
             IUserRepository userRepository, 
             IJwtService jwtService,
             IClaimsService claimsService,
             IPasswordHelper passwordHelper,
-            ILogger<LoginCommandHandler> logger
+            ILogger<LoginCommandHandler> logger,
+            IAuditService auditService
             )
         {
             _userRepository = userRepository;
@@ -38,6 +41,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             _claimsService = claimsService;
             _passwordHelper = passwordHelper;
             _logger = logger;
+            _auditService = auditService;
         }
 
         //public IClaimsService ClaimsService { get; }
@@ -48,6 +52,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             var validator = new LoginDtoValidator();
             var validationResult = await validator.ValidateAsync(request.loginDto);
             var isMatch = false;
+            var loginPath = "/api/v1/Auth/login";
 
             if (!validationResult.IsValid)
             {
@@ -114,13 +119,20 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                     return response;
                 }
 
+                // call the audit service
+
+
                 var token = await GenerateAccessToken(user.Id);
                 user.RegistrationToken = token ?? "";
                 // update the user table
                 await _userRepository.Update(user);
 
                 var newData = await GenerateNewRefreshToken(user.Id);
+
+                _logger.LogInformation($"user id - {user.Id.ToString()}, email - {user.Email}, and path - {loginPath}");
+                await _auditService.LogAsync(user.Id.ToString(), user.Email, loginPath);
                 
+
                 response.Success = true;
                 response.Message = "Login successfully";
                 response.Errors = null!;
