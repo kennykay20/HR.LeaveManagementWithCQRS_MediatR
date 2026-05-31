@@ -20,7 +20,7 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__HRLeaveConnectionString=Server=sqlserver;Database=LeaveManagementDb;User Id=sa;Password=Oluwadamilare@2026;TrustServerCertificate=True;
       - ASPNETCORE_URLS=http://+:8080
-      - Redis__ConnectionString=redis:6379
+      - Redis__ConnectionString=redis:6379,abortConnect=false
 
     depends_on:
       sqlserver:

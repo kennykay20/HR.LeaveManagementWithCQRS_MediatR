@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HR_LeaveManagement.Application.Contracts.Infrastructure.Interfaces;
 using HR_LeaveManagement.Application.Contracts.Persistence;
 using HR_LeaveManagement.Application.DTOs.LeaveRequest;
 using HR_LeaveManagement.Application.DTOs.LeaveType;
@@ -22,16 +23,19 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
         private readonly ILeaveTypeRepository _leaveTypeRepo;
         private readonly IMapper _mapper;
         private readonly ILogger<CreateLeaveTypeCommandHandler> _logger;
+        private readonly ICacheService _cacheService;
+        private const string LeaveTypesCacheKey = "leave-types";
 
         public CreateLeaveTypeCommandHandler(
-            ILeaveTypeRepository leaveTypeRepo, 
-            IMapper mapper, 
-            ILogger<CreateLeaveTypeCommandHandler> logger
-            )
+            ILeaveTypeRepository leaveTypeRepo,
+            IMapper mapper,
+            ILogger<CreateLeaveTypeCommandHandler> logger,
+            ICacheService cacheService)
         {
             _leaveTypeRepo = leaveTypeRepo;
             _mapper = mapper;
             _logger = logger;
+            _cacheService = cacheService;
         }
         public async Task<BaseCommandResponse<LeaveTypeDto>> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
         {
@@ -62,6 +66,8 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 var leaveResponse = await _leaveTypeRepo.Add(leaveType);
 
                 var result = _mapper.Map<LeaveTypeDto>(leaveResponse);
+
+                await _cacheService.RemoveAsync(LeaveTypesCacheKey);
 
                 response.Success = true;
                 response.Message = "Creation successful.";

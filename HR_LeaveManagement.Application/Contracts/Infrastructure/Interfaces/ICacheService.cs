@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace HR_LeaveManagement.Application.Contracts.Infrastructure.Interfaces
 {
-    internal interface ICacheService
+    public interface ICacheService
     {
+        Task<T?> GetAsync<T>(string key);
+        Task SetAsync<T>(string key, T value, TimeSpan expiration);
+        Task RemoveAsync(string key);
     }
 }

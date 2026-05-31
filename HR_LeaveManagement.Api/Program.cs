@@ -120,7 +120,7 @@ try
     {
         options.Configuration = builder.Configuration["Redis:ConnectionString"];
 
-        options.InstanceName = "HRLeaveManagement";
+        options.InstanceName = "HRLeaveManagement:";
     });
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -166,6 +166,10 @@ try
             .AllowAnyHeader()
             .AllowAnyMethod());
     });
+
+    var redisConnection = builder.Configuration["Redis:ConnectionString"];
+
+    Log.Information("Redis connection: {connection}", redisConnection);
 
     var app = builder.Build();
 

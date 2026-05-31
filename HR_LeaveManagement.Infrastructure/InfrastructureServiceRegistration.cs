@@ -26,6 +26,8 @@ namespace HR_LeaveManagement.Infrastructure
             services.AddScoped<IPasswordHelper, PasswordHelper>();
             services.AddScoped<IOtpService, OtpService>();
 
+            services.AddScoped<ICacheService, CacheService>();
+
             services.AddHangfire(config =>
                     config.UseSqlServerStorage(
                         configuration.GetConnectionString("HRLeaveConnectionString")
