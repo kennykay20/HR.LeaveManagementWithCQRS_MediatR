@@ -64,18 +64,23 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 return response;
             }
             _logger.LogInformation("Validator is valid ");
+            var email = request.loginDto.Email;
+            var userId = "";
+
             try
             {
                 var user = await _userRepository.GetUserByEmail(request.loginDto.Email);
                 if (user is null)
                 {
+                    await _auditService.FailedLoginAsync("", email);
                     response.Success = false;
-                    response.Message = "User not foind, Please sign up or register.";
-                    response.Errors = null;
+                    response.Message = "User not found, Please sign up or register.";
+                    response.Errors = null!;
                     response.AccessToken = "";
                     response.RefreshToken = "";
                     return response;
                 }
+                userId = user.Id.ToString();
 
                 _logger.LogInformation($"Is user active {user.IsActive}, email = {user.Email}");
 
@@ -130,7 +135,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 var newData = await GenerateNewRefreshToken(user.Id);
 
                 _logger.LogInformation($"user id - {user.Id.ToString()}, email - {user.Email}, and path - {loginPath}");
-                await _auditService.LogAsync(user.Id.ToString(), user.Email, loginPath);
+                await _auditService.SuccessfulLoginAsync(user.Id.ToString(), user.Email);
                 
 
                 response.Success = true;
@@ -138,12 +143,14 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 response.Errors = null!;
                 response.AccessToken = token ?? "";
                 response.RefreshToken = newData.RefreshToken ?? "";
-
+                
                 return response;
             }
             catch(Exception ex)
             {
+                
                 _logger.LogError($"An error occur while login as a user {ex.Message}");
+                await _auditService.FailedLoginAsync(userId, email);
                 throw new Exception(ex.Message);
             }
         }

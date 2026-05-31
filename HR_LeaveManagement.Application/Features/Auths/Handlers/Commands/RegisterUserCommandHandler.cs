@@ -64,6 +64,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             _logger.LogInformation($"registration for email is {email} ");
             if (!validationResult.IsValid)
             {
+                await _auditService.FailedRegistrationAsync("", email);
                 response.Success = false;
                 response.Message = "User Registration Failed.";
                 response.Errors = validationResult.Errors.Select(er => er.ErrorMessage).ToList();
@@ -134,7 +135,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
                 // update the user table
                 await _userRepository.Update(result);
 
-                await _auditService.LogAsync(result.Id.ToString(), email, registerPath);
+                await _auditService.SuccessfulRegistrationAsync(result.Id.ToString(), email);
 
                 _logger.LogInformation($"updated at user id = {result.Id}, email = {result.Email}, updatedAt = {result.LastModifiedBy}, and lastname = {result.LastName}");
                 response.Success = true;
@@ -146,6 +147,7 @@ namespace HR_LeaveManagement.Application.Features.Auths.Handlers.Commands
             catch(Exception ex)
             {
                 Console.WriteLine("An error occur, registering a user ", ex.Message);
+                await _auditService.FailedRegistrationAsync(result.Id.ToString(), email);
                 throw new Exception(ex.Message);
             }
         }

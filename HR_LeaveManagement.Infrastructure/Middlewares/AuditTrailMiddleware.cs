@@ -35,30 +35,33 @@ namespace HR_LeaveManagement.Infrastructure.Middlewares
             var loginPath = "/api/v1/Auth/login";
             var registerPath = "/api/v1/Auth/register";
 
-            logger.LogInformation($"path {path}, loginPath - {loginPath}, and registerPaht - {registerPath}");
+            logger.LogInformation($"path {path}, loginPath - {loginPath}, and registerPath - {registerPath}");
 
             if (context.Request.Method == "GET")
                 return;
 
             AuditTrail audit = new AuditTrail();
 
-            if (path != loginPath || path != registerPath)
+            if (path.Equals(loginPath, StringComparison.OrdinalIgnoreCase) ||
+                    path.Equals(registerPath, StringComparison.OrdinalIgnoreCase))
             {
-                logger.LogInformation("not login or register ");
-                audit.Id = Guid.NewGuid();
-                audit.UserId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                audit.Email = context.User.FindFirst(ClaimTypes.Email)?.Value;
-                audit.Action = $"{context.Request.Method} {path}";
-                audit.Method = context.Request.Method;
-                audit.Path = path;
-                audit.StatusCode = context.Response.StatusCode;
-                audit.IpAddress = context.Connection.RemoteIpAddress?.ToString();
-                audit.CreatedAt = DateTime.UtcNow;
-
-                await auditTrailRepo.Add(audit);
-
-                logger.LogInformation("Audit trail saved");
+                return;
             }
+
+            logger.LogInformation("not login or register path ");
+            audit.Id = Guid.NewGuid();
+            audit.UserId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            audit.Email = context.User.FindFirst(ClaimTypes.Email)?.Value;
+            audit.Action = $"{context.Request.Method} {path}";
+            audit.Method = context.Request.Method;
+            audit.Path = path;
+            audit.StatusCode = context.Response.StatusCode;
+            audit.IpAddress = context.Connection.RemoteIpAddress?.ToString();
+            audit.CreatedAt = DateTime.UtcNow;
+
+            await auditTrailRepo.Add(audit);
+
+            logger.LogInformation("Audit trail saved");
         }
     }
 }

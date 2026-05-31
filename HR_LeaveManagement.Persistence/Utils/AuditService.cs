@@ -34,9 +34,9 @@ namespace HR_LeaveManagement.Persistence.Utils
         {
             _logger.LogInformation("inside the audit serivce - logAsync ");
             var context = _httpContextAccessor.HttpContext;
-            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "";
+            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
-            var anotherPath = context?.Request?.Path;
+            var anotherPath = context?.Request?.Path ?? "unknown";
 
             var statusCode = context?.Response?.StatusCode ?? 0;
 
@@ -63,9 +63,10 @@ namespace HR_LeaveManagement.Persistence.Utils
         {
             _logger.LogInformation("inside the audit serivce - failedLogin ");
             var context = _httpContextAccessor.HttpContext;
-            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "";
+            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
             var statusCode = context?.Response?.StatusCode ?? 0;
+            var path = context?.Request?.Path ?? "unknown";
 
             _logger.LogInformation($"user id {userId}, email - {email}, and ipAddress - {ipAddress} ");
 
@@ -76,7 +77,7 @@ namespace HR_LeaveManagement.Persistence.Utils
                 Email = email,
                 Action = $"FAILED_LOGIN",
                 Method = "POST",
-                Path = "",
+                Path = path,
                 StatusCode = statusCode,
                 IpAddress = ipAddress,
                 CreatedAt = DateTime.UtcNow
@@ -92,6 +93,7 @@ namespace HR_LeaveManagement.Persistence.Utils
             var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
 
             var statusCode = context?.Response?.StatusCode ?? 0;
+            var path = context?.Request?.Path ?? "unknown";
 
             _logger.LogInformation($"user id {userId}, email - {email}, and ipAddress - {ipAddress} ");
 
@@ -102,7 +104,7 @@ namespace HR_LeaveManagement.Persistence.Utils
                 Email = email,
                 Action = $"FAILED_REGISTRATION",
                 Method = "POST",
-                Path = "",
+                Path = path,
                 StatusCode = statusCode,
                 IpAddress = ipAddress,
                 CreatedAt = DateTime.UtcNow
@@ -115,7 +117,10 @@ namespace HR_LeaveManagement.Persistence.Utils
         {
             _logger.LogInformation("inside the audit serivce - passwordResetAsync ");
             var context = _httpContextAccessor.HttpContext;
-            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "";
+            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            var statusCode = context?.Response?.StatusCode ?? 0;
+            var path = context?.Request?.Path ?? "unknown";
 
             _logger.LogInformation($"user id {userId}, email - {email}, and ipAddress - {ipAddress} ");
 
@@ -126,8 +131,8 @@ namespace HR_LeaveManagement.Persistence.Utils
                 Email = email,
                 Action = $"PASSWORD_RESET",
                 Method = "POST",
-                Path = "",
-                StatusCode = 201,
+                Path = path,
+                StatusCode = statusCode,
                 IpAddress = ipAddress,
                 CreatedAt = DateTime.UtcNow
             };
@@ -139,7 +144,10 @@ namespace HR_LeaveManagement.Persistence.Utils
         {
             _logger.LogInformation("inside the audit serivce - permissionChangeAsync ");
             var context = _httpContextAccessor.HttpContext;
-            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "";
+            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            var statusCode = context?.Response?.StatusCode ?? 0;
+            var path = context?.Request?.Path ?? "unknown";
 
             _logger.LogInformation($"user id {userId}, email - {email}, and ipAddress - {ipAddress} ");
 
@@ -150,8 +158,8 @@ namespace HR_LeaveManagement.Persistence.Utils
                 Email = email,
                 Action = $"PERMISSION_CHANGE",
                 Method = "POST",
-                Path = "",
-                StatusCode = 201,
+                Path = path,
+                StatusCode = statusCode,
                 IpAddress = ipAddress,
                 CreatedAt = DateTime.UtcNow
             };
@@ -163,7 +171,10 @@ namespace HR_LeaveManagement.Persistence.Utils
         {
             _logger.LogInformation("inside the audit serivce - refreshTokenAsync ");
             var context = _httpContextAccessor.HttpContext;
-            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "";
+            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            var statusCode = context?.Response?.StatusCode ?? 0;
+            var path = context?.Request?.Path ?? "unknown";
 
             _logger.LogInformation($"user id {userId}, email - {email}, and ipAddress - {ipAddress} ");
 
@@ -174,8 +185,8 @@ namespace HR_LeaveManagement.Persistence.Utils
                 Email = email,
                 Action = $"REFRESH_TOKEN",
                 Method = "POST",
-                Path = "",
-                StatusCode = 201,
+                Path = path,
+                StatusCode = statusCode,
                 IpAddress = ipAddress,
                 CreatedAt = DateTime.UtcNow
             };
@@ -187,7 +198,10 @@ namespace HR_LeaveManagement.Persistence.Utils
         {
             _logger.LogInformation("inside the audit serivce - roleChangeAsync ");
             var context = _httpContextAccessor.HttpContext;
-            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "";
+            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            var statusCode = context?.Response?.StatusCode ?? 0;
+            var path = context?.Request?.Path ?? "unknown";
 
             _logger.LogInformation($"user id {userId}, email - {email}, and ipAddress - {ipAddress} ");
 
@@ -198,8 +212,8 @@ namespace HR_LeaveManagement.Persistence.Utils
                 Email = email,
                 Action = $"ROLE_CHANGE",
                 Method = "POST",
-                Path = "",
-                StatusCode = 201,
+                Path = path,
+                StatusCode = statusCode,
                 IpAddress = ipAddress,
                 CreatedAt = DateTime.UtcNow
             };
@@ -211,7 +225,10 @@ namespace HR_LeaveManagement.Persistence.Utils
         {
             _logger.LogInformation("inside the audit serivce - successfulLoginAsync ");
             var context = _httpContextAccessor.HttpContext;
-            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "";
+            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            var statusCode = context?.Response?.StatusCode ?? 0;
+            var path = context?.Request?.Path ?? "unknown";
 
             _logger.LogInformation($"user id {userId}, email - {email}, and ipAddress - {ipAddress} ");
 
@@ -222,8 +239,8 @@ namespace HR_LeaveManagement.Persistence.Utils
                 Email = email,
                 Action = $"SUCCESSFUL_LOGIN",
                 Method = "POST",
-                Path = "",
-                StatusCode = 201,
+                Path = path,
+                StatusCode = statusCode,
                 IpAddress = ipAddress,
                 CreatedAt = DateTime.UtcNow
             };
@@ -235,7 +252,10 @@ namespace HR_LeaveManagement.Persistence.Utils
         {
             _logger.LogInformation("inside the audit serivce - successfulRegistrationAsync ");
             var context = _httpContextAccessor.HttpContext;
-            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "";
+            var ipAddress = context?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            var statusCode = context?.Response?.StatusCode ?? 0;
+            var path = context?.Request?.Path ?? "unknown";
 
             _logger.LogInformation($"user id {userId}, email - {email}, and ipAddress - {ipAddress} ");
 
@@ -246,8 +266,8 @@ namespace HR_LeaveManagement.Persistence.Utils
                 Email = email,
                 Action = $"SUCCESSFUL_REGISTRATION",
                 Method = "POST",
-                Path = "",
-                StatusCode = 201,
+                Path = path,
+                StatusCode = statusCode,
                 IpAddress = ipAddress,
                 CreatedAt = DateTime.UtcNow
             };

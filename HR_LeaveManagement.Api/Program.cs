@@ -10,6 +10,7 @@ using HR_LeaveManagement.Infrastructure.Middlewares;
 using HR_LeaveManagement.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
@@ -42,6 +43,11 @@ try
     builder.Services.ConfigureApplicationServices()
                     .ConfigureInfrastructureServices(builder.Configuration)
                     .ConfigurePersistenceServices(builder.Configuration);
+
+    builder.Services.AddHealthChecks()
+                    .AddSqlServer(
+                        builder.Configuration.GetConnectionString("HRLeaveConnectionString")!
+                    );
 
     // 
     builder.Host.UseSerilog((context, services, loggerConfiguration) =>
@@ -107,6 +113,14 @@ try
 
             ClockSkew = TimeSpan.Zero
         };
+    });
+
+    // redis exc
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration["Redis:ConnectionString"];
+
+        options.InstanceName = "HRLeaveManagement";
     });
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -182,6 +196,14 @@ try
 
     app.UseSwaggerUI();
 
+
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = 
+                ForwardedHeaders.XForwardedFor |
+                ForwardedHeaders.XForwardedProto
+    });
+
     app.UseAuthentication();
 
     app.UseMiddleware<RequestLoggingMiddleware>();
@@ -210,6 +232,17 @@ try
             
         }
     }
+
+    app.MapGet("/instance", () => 
+    {
+        return new
+        {
+            Instance = Environment.MachineName,
+            Time = DateTime.UtcNow
+        };
+    });
+
+    app.MapHealthChecks("/health");
 
     app.Run();
 }
