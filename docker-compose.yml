@@ -21,13 +21,17 @@
       - ConnectionStrings__HRLeaveConnectionString=Server=sqlserver;Database=LeaveManagementDb;User Id=sa;Password=Oluwadamilare@2026;TrustServerCertificate=True;
       - ASPNETCORE_URLS=http://+:8080
       - Redis__ConnectionString=redis:6379,abortConnect=false
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=admin
+      - RabbitMq__Password=admin123
 
     depends_on:
       sqlserver:
         condition: service_healthy
       redis:
         condition: service_healthy
-
+      rabbitmq:
+        condition: service_healthy
 
   api2:
     build:
@@ -51,11 +55,16 @@
       - ConnectionStrings__HRLeaveConnectionString=Server=sqlserver;Database=LeaveManagementDb;User Id=sa;Password=Oluwadamilare@2026;TrustServerCertificate=True;
       - ASPNETCORE_URLS=http://+:8080
       - Redis__ConnectionString=redis:6379
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=admin
+      - RabbitMq__Password=admin123
 
     depends_on:
       sqlserver:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -107,6 +116,28 @@
       interval: 10s
       timeout: 5s
       retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+
+    container_name: rabbitmq
+
+    hostname: rabbitmq
+
+    ports:
+      - "5672:5672"        # port for communication
+      - "15672:15672"      # port for Management UI
+    
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin123
+
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 
 volumes:
   sql_data:

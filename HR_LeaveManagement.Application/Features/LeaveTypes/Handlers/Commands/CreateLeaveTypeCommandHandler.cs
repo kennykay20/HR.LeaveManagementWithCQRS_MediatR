@@ -4,9 +4,11 @@ using HR_LeaveManagement.Application.Contracts.Persistence;
 using HR_LeaveManagement.Application.DTOs.LeaveRequest;
 using HR_LeaveManagement.Application.DTOs.LeaveType;
 using HR_LeaveManagement.Application.DTOs.LeaveType.Validators;
+using HR_LeaveManagement.Application.Events;
 using HR_LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR_LeaveManagement.Application.Responses;
 using HR_LeaveManagement.Domain.Entities;
+using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
@@ -30,7 +32,8 @@ namespace HR_LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
             ILeaveTypeRepository leaveTypeRepo,
             IMapper mapper,
             ILogger<CreateLeaveTypeCommandHandler> logger,
-            ICacheService cacheService)
+            ICacheService cacheService
+            )
         {
             _leaveTypeRepo = leaveTypeRepo;
             _mapper = mapper;

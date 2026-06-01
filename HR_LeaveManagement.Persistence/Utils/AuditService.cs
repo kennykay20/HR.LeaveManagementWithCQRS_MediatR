@@ -274,5 +274,20 @@ namespace HR_LeaveManagement.Persistence.Utils
             await _auditTrailRepo.Add(audit);
             _logger.LogInformation($"Successful register for email {email}");
         }
+
+        public Task CreateLeaveRequestAsync(string userId, string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateLeaveRequestAsync(string userId, string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteLeaveRequestAsync(string userId, string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -19,5 +19,8 @@ namespace HR_LeaveManagement.Application.Contracts.Persistences
         Task PasswordResetAsync(string userId, string email);
         Task RoleChangeAsync(string userId, string email);
         Task PermissionChangeAsync(string userId, string email);
+        Task CreateLeaveRequestAsync(string userId, string email);
+        Task UpdateLeaveRequestAsync(string userId, string email);
+        Task DeleteLeaveRequestAsync(string userId, string email);
     }
 }

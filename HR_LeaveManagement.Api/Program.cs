@@ -6,8 +6,10 @@ using HR_LeaveManagement.Application.Contracts.Attributes.Permissions;
 using HR_LeaveManagement.Application.Models;
 using HR_LeaveManagement.Infrastructure;
 using HR_LeaveManagement.Infrastructure.Helpers;
+using HR_LeaveManagement.Infrastructure.Messaging.Consumers;
 using HR_LeaveManagement.Infrastructure.Middlewares;
 using HR_LeaveManagement.Persistence;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -121,6 +123,28 @@ try
         options.Configuration = builder.Configuration["Redis:ConnectionString"];
 
         options.InstanceName = "HRLeaveManagement:";
+    });
+
+    // RabbitMQ MassTransit
+    builder.Services.AddMassTransit(opt =>
+    {
+        opt.AddConsumer<LeaveRequestCreatedConsumer>();
+
+        opt.UsingRabbitMq((context, cfg) =>
+        {
+            Log.Information("RabbiMq password - {password}", builder.Configuration["RabbitMq:Password"]);
+            cfg.Host
+                (
+                builder.Configuration["RabbitMq:Host"],
+                "/",
+                hst =>
+                {
+                    hst.Username(builder.Configuration["RabbitMq:Username"]);
+
+                    hst.Password(builder.Configuration["RabbitMq:Password"]);
+                });
+            cfg.ConfigureEndpoints(context);
+        });
     });
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
