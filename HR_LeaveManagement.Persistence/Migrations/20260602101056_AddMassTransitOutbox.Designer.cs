@@ -4,6 +4,7 @@ using HR_LeaveManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HR_LeaveManagement.Persistence.Migrations
 {
     [DbContext(typeof(HRLeaveManagementDbContext))]
-    partial class HRLeaveManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260602101056_AddMassTransitOutbox")]
+    partial class AddMassTransitOutbox
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,27 +239,6 @@ namespace HR_LeaveManagement.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Permissions", (string)null);
-                });
-
-            modelBuilder.Entity("HR_LeaveManagement.Domain.Entities.ProcessedMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("MessageId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("ProcessedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId")
-                        .IsUnique();
-
-                    b.ToTable("ProcessedMessages", (string)null);
                 });
 
             modelBuilder.Entity("HR_LeaveManagement.Domain.Entities.Role", b =>

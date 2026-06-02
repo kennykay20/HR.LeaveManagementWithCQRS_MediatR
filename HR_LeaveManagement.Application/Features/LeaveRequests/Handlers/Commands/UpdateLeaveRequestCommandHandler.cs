@@ -18,18 +18,21 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
     public class UpdateLeaveRequestCommandHandler : IRequestHandler<UpdateLeaveRequestCommand, Unit>
     {
         private readonly ILeaveRequestRepository _leaveRequestRepo;
+        private readonly ILeaveTypeRepository _leaveTypeRepo;
         private readonly IMapper _mapper;
         private readonly ILogger<UpdateLeaveRequestCommandHandler> _logger;
 
         public UpdateLeaveRequestCommandHandler(
-            ILeaveRequestRepository leaveRequestRepo, 
+            ILeaveRequestRepository leaveRequestRepo,
             IMapper mapper,
-            ILogger<UpdateLeaveRequestCommandHandler> logger
+            ILogger<UpdateLeaveRequestCommandHandler> logger,
+            ILeaveTypeRepository leaveTypeRepo
             )
         {
             _leaveRequestRepo = leaveRequestRepo;
             _mapper = mapper;
             _logger = logger;
+            _leaveTypeRepo = leaveTypeRepo;
         }
         public async Task<Unit> Handle(UpdateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
@@ -41,7 +44,7 @@ namespace HR_LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                 if (request.LeaveRequestDto is not null)
                 {
                     id = request.LeaveRequestDto.Id;
-                    var validator = new UpdateLeaveRequestDtoValidator(_leaveRequestRepo);
+                    var validator = new UpdateLeaveRequestDtoValidator(_leaveRequestRepo, _leaveTypeRepo);
                     validationResult = await validator.ValidateAsync(request.LeaveRequestDto, cancellationToken);
                 }
                 else if (request.ChangeLeaveRequestApprovalDto is not null)

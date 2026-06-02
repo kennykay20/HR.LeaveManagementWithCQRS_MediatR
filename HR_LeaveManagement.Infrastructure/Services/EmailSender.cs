@@ -1,6 +1,7 @@
 ﻿using Hangfire;
 using HR_LeaveManagement.Application.Contracts.Infrastructure.Interfaces;
 using HR_LeaveManagement.Application.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -17,9 +18,13 @@ namespace HR_LeaveManagement.Infrastructure.Services
     public class EmailSender : IEmailSender
     {
         private readonly EmailSettings _emailSettings;
-        public EmailSender(IOptions<EmailSettings> emailSettings)
+        private readonly ILogger<EmailSender> _logger;
+        public EmailSender(
+            IOptions<EmailSettings> emailSettings, 
+            ILogger<EmailSender> logger)
         {
             _emailSettings = emailSettings.Value;
+            _logger = logger;
         }
 
         public async Task<bool> SendEmailData(Email email, CancellationToken token = default)
@@ -56,6 +61,8 @@ namespace HR_LeaveManagement.Infrastructure.Services
         [AutomaticRetry(Attempts = 3)]
         public async Task<bool> SendEmail(Email email)
         {
+            _logger.LogInformation("Inside the sendEmail, SendEmailData starting");
+            _logger.LogInformation($"emailTo - {email.To}, subject - {email.Subject}");
             return await SendEmailData(email);
         }
     }

@@ -128,22 +128,38 @@ try
     // RabbitMQ MassTransit
     builder.Services.AddMassTransit(opt =>
     {
+        Log.Information("RabbiMq username - {username}, and host - {host}", builder.Configuration["RabbitMq:Username"], builder.Configuration["RabbitMq:Host"]);
         opt.AddConsumer<LeaveRequestCreatedConsumer>();
+
+        opt.AddEntityFrameworkOutbox<HRLeaveManagementDbContext>(op =>
+        {
+            op.UseSqlServer();
+            op.UseBusOutbox();
+        });
 
         opt.UsingRabbitMq((context, cfg) =>
         {
-            Log.Information("RabbiMq password - {password}", builder.Configuration["RabbitMq:Password"]);
+            
             cfg.Host
                 (
                 builder.Configuration["RabbitMq:Host"],
                 "/",
                 hst =>
                 {
-                    hst.Username(builder.Configuration["RabbitMq:Username"]);
+                    hst.Username(builder.Configuration["RabbitMq:Username"]!);
 
-                    hst.Password(builder.Configuration["RabbitMq:Password"]);
+                    hst.Password(builder.Configuration["RabbitMq:Password"]!);
                 });
             cfg.ConfigureEndpoints(context);
+            cfg.UseMessageRetry(rty =>
+            {
+                rty.Exponential(
+                    retryLimit: 5,
+                    minInterval: TimeSpan.FromSeconds(1),
+                    maxInterval: TimeSpan.FromSeconds(1),
+                    intervalDelta: TimeSpan.FromSeconds(5)
+                );
+            });
         });
     });
 

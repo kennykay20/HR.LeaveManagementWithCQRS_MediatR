@@ -44,6 +44,9 @@ namespace HR_LeaveManagement.Api.Controllers.V1
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateLeaveRequestDto request)
         {
+            Console.WriteLine("request dto, here inside the CreateLeave controller with LeaveTypeId and email ");
+            Console.WriteLine(request.LeaveTypeId);
+            Console.WriteLine(request.Email);
             var command = new CreateLeaveRequestCommand { LeaveRequestDto = request };
             var response = await _mediator.Send(command);
             return Ok(response);

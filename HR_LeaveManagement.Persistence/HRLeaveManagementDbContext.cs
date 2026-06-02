@@ -1,5 +1,6 @@
 ﻿using HR_LeaveManagement.Domain.Common;
 using HR_LeaveManagement.Domain.Entities;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,11 +27,16 @@ namespace HR_LeaveManagement.Persistence
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<AuditTrail> AuditTrails { get; set; }
+        public DbSet<ProcessedMessage> ProcessedMessages { get; set; }
 
         // this automatically registers all configurations.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(HRLeaveManagementDbContext).Assembly);
+
+            modelBuilder.AddOutboxStateEntity();
+            modelBuilder.AddInboxStateEntity();
+            modelBuilder.AddOutboxMessageEntity();
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -38,7 +44,7 @@ namespace HR_LeaveManagement.Persistence
             foreach (var entry in ChangeTracker.Entries<BaseCommonEntity>())
             {
                 entry.Entity.LastModifiedDate = DateTime.Now;
-                Console.WriteLine("Entity state = ", entry.State);
+                Console.WriteLine("Entity state = " + entry.State);
                 if(entry.State == EntityState.Added)
                 {
                     Console.WriteLine("Inside entry state for add");

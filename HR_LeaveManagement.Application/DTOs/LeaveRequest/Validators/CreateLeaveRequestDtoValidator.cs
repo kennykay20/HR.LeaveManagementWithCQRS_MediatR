@@ -8,13 +8,13 @@ namespace HR_LeaveManagement.Application.DTOs.LeaveRequest.Validators
 {
     public class CreateLeaveRequestDtoValidator : AbstractValidator<CreateLeaveRequestDto>
     {
-        private readonly ILeaveRequestRepository _leaveRequestRepo;
+        private readonly ILeaveTypeRepository _leaveTypeRepo;
 
-        public CreateLeaveRequestDtoValidator(ILeaveRequestRepository leaveRequestRepo)
+        public CreateLeaveRequestDtoValidator(ILeaveTypeRepository leaveTypeRepo)
         {
-            _leaveRequestRepo = leaveRequestRepo;
+            _leaveTypeRepo = leaveTypeRepo;
 
-            Include(new ILeaveRequestDtoValidator(_leaveRequestRepo));
+            Include(new ILeaveRequestDtoValidator(_leaveTypeRepo));
             
         }
     }
